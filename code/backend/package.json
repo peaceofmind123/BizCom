@@ -11,7 +11,13 @@
     "type": "git",
     "url": "\"https://github.com/peaceofmind123/BizCom.git\""
   },
-  "author": "Ashish Satan",
+  "author": "Ashish Paudel",
+  "license": "UNLICENSED",
+  "contributors": [
+    "Aashish Manandhar",
+    "Nripendra Timilsina",
+    "Suman Sapkota"
+  ],
   "dependencies": {
     "body-parser": "1.18.3",
     "chalk": "2.4.1",
