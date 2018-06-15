@@ -20,10 +20,16 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 
 //database connection
-//replace <dbuser> by your database username and <dbpassword> by your database password
 
-//const db = mongoose.connect('mongodb://<dbuser>:<dbpassword>@ds141401.mlab.com:41401/bizcom');
-
+mongoose.connect('mongodb://nripendra:havoc123@ds141401.mlab.com:41401/bizcom');
+const db = mongoose.connection;
+db.on('error', (err)=>{
+   console.log("couldn't connect to database!!");
+   return console.log(err);
+});
+db.once('open',()=>{
+    debug('connected to database');
+})
 //architectural division
 
 //the user accounts subsystem
@@ -50,4 +56,4 @@ app.get('/',(req,res)=>{
 
 app.listen(port,()=>{
     debug(" listening on port "+ chalk.green(port));
-})
+});
