@@ -9,6 +9,14 @@ const bodyParser = require('body-parser');
 const chalk = require('chalk');
 const morgan = require('morgan');
 const path = require('path');
+const cookieParser = require('cookie-parser');
+const flash = require('connect-flash');
+const session = require('express-session');
+const passport = require('passport');
+//the local strategy is for our own authentication
+const LocalStrategy = require('passport-local').Strategy;
+//this is in accordance with the express-validator 5.* update.. no need of middleware declarations
+const {check, validationResult} =require('express-validator/check');
 
 const port = process.env.port || 8000;
 
@@ -18,6 +26,20 @@ const app = express();
 //application middleware use declarations
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
+app.use(cookieParser());
+//the session object to be used throughout the app
+app.use(session({
+    secret: 'teamBaagh',
+    saveUninitialized: true,
+    resave: true
+}));
+
+
+app.use(passport.initialize());
+app.use(passport.session());
+//used for returning validation error messages
+app.use(flash());
+app.use(morgan('tiny'));
 
 //database connection
 
@@ -29,7 +51,7 @@ db.on('error', (err)=>{
 });
 db.once('open',()=>{
     debug('connected to database');
-})
+});
 //architectural division
 
 //the user accounts subsystem
@@ -51,6 +73,7 @@ app.use('/search', searchRouter);
 app.use('/recommendation',recRouter);
 //the api starting point
 app.get('/',(req,res)=>{
+    debug('get request recieved');
     res.send("API starting point!!");
 });
 
