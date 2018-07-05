@@ -3,6 +3,7 @@ package bizcom.bizcom;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +17,8 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+
+
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationHolder;
 import com.basgeekball.awesomevalidation.ValidationStyle;
@@ -25,9 +28,19 @@ import com.basgeekball.awesomevalidation.utility.custom.CustomValidation;
 import com.basgeekball.awesomevalidation.utility.custom.CustomValidationCallback;
 import com.basgeekball.awesomevalidation.utility.custom.SimpleCustomValidation;
 
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.regex.Pattern;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 
 public class SignupActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -55,19 +68,16 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
     AwesomeValidation awesomeValidation;
     ArrayList<String> countries;
 
-    public void signUp(View view) {
-        fName = fNameText.getText().toString();
-        lName = lNameText.getText().toString();
-        userName = userNameText.getText().toString();
-        email = emailText.getText().toString();
-        password = passwordText.getText().toString();
-        confirmPassword = confirmPasswordText.getText().toString();
-        phone = phoneText.getText().toString();
-        city = cityText.getText().toString();
+
+    public void signUp(View view) throws Exception {
+        String json= getJson();
+        String url = "http://192.168.1.67:8000";
+        new SignupPostTask().execute(url,json);
 
 
 
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +127,12 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
             @Override
             public void onClick(View v) {
                 awesomeValidation.validate();
+                try {
+                    signUp(v);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
         });
         tosAccept.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
@@ -137,6 +153,32 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
                 }
             }
         });
+    }
+
+    private String getJson() throws Exception {
+        fName = fNameText.getText().toString();
+        lName = lNameText.getText().toString();
+        userName = userNameText.getText().toString();
+        email = emailText.getText().toString();
+        password = passwordText.getText().toString();
+        confirmPassword = confirmPasswordText.getText().toString();
+        phone = phoneText.getText().toString();
+        city = cityText.getText().toString();
+        String encryptedPass = AESCrypt.encrypt(password);
+        String encryptedPassConfirm = AESCrypt.encrypt(confirmPassword);
+        String encryptedPhone = AESCrypt.encrypt(phone);
+        encryptedPass=encryptedPass.substring(0,encryptedPass.length()-1); //apparently there is a /n at the end that causes errors, so truncated it
+        encryptedPassConfirm = encryptedPassConfirm.substring(0,encryptedPassConfirm.length()-1); // gotta consider it on the backend too
+        encryptedPhone = encryptedPhone.substring(0,encryptedPhone.length()-1);
+        String json="'{\"fName\":\""+fName+"\","+
+                        "\"lName\":\""+lName+"\","+
+                        "\"userName\":\""+userName+"\","+
+                        "\"password\":\""+encryptedPass+ "\","+
+                        "\"confirmPassword\":\""+encryptedPassConfirm+"\","+
+                        "\"phone\":\""+encryptedPhone+"\","+
+                        "\"city\":\""+city+"\"}'";
+        System.out.print(json);
+        return json;
     }
 
     private void getCountries() {
@@ -186,5 +228,36 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+}
+
+class SignupPostTask extends AsyncTask<String,Void,String>{
+    //the okhttp singleton
+    OkHttpClient client=new OkHttpClient();
+    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private Exception exception;
+    @Override
+    protected String doInBackground(String... params) {
+        String url = params[0];
+        String json = params[1];
+
+
+        String response = null;
+        try {
+            response = doPostRequest(url,json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(response);
+        return response;
+    }
+    private String doPostRequest(String url, String json) throws IOException,NullPointerException {
+        RequestBody body = RequestBody.create(JSON, json);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+        Response response = client.newCall(request).execute();
+        return response.body().string();
     }
 }
