@@ -24,7 +24,6 @@ const port = process.env.port || 8000;
 const app = express();
 
 //application middleware use declarations
-app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 app.use(cookieParser());
 //the session object to be used throughout the app

@@ -29,6 +29,8 @@ import com.basgeekball.awesomevalidation.utility.custom.CustomValidationCallback
 import com.basgeekball.awesomevalidation.utility.custom.SimpleCustomValidation;
 
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,7 +73,7 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
 
     public void signUp(View view) throws Exception {
         String json= getJson();
-        String url = "http://192.168.1.67:8000";
+        String url = "http://192.168.1.67:8000/userAccounts/signup";
         new SignupPostTask().execute(url,json);
 
 
@@ -164,21 +166,27 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
         confirmPassword = confirmPasswordText.getText().toString();
         phone = phoneText.getText().toString();
         city = cityText.getText().toString();
+        country = countrySpinner.getSelectedItem().toString();
+
+        //encryption
         String encryptedPass = AESCrypt.encrypt(password);
         String encryptedPassConfirm = AESCrypt.encrypt(confirmPassword);
         String encryptedPhone = AESCrypt.encrypt(phone);
         encryptedPass=encryptedPass.substring(0,encryptedPass.length()-1); //apparently there is a /n at the end that causes errors, so truncated it
         encryptedPassConfirm = encryptedPassConfirm.substring(0,encryptedPassConfirm.length()-1); // gotta consider it on the backend too
         encryptedPhone = encryptedPhone.substring(0,encryptedPhone.length()-1);
-        String json="'{\"fName\":\""+fName+"\","+
-                        "\"lName\":\""+lName+"\","+
-                        "\"userName\":\""+userName+"\","+
-                        "\"password\":\""+encryptedPass+ "\","+
-                        "\"confirmPassword\":\""+encryptedPassConfirm+"\","+
-                        "\"phone\":\""+encryptedPhone+"\","+
-                        "\"city\":\""+city+"\"}'";
-        System.out.print(json);
-        return json;
+
+        // converting to json
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("fName",fName);
+        jsonObject.put("lName",lName);
+        jsonObject.put("userName",userName);
+        jsonObject.put("password",encryptedPass);
+        jsonObject.put("confirmPassword",encryptedPassConfirm);
+        jsonObject.put("phone",encryptedPhone);
+        jsonObject.put("city",city);
+        jsonObject.put("country",country);
+        return jsonObject.toString();
     }
 
     private void getCountries() {
