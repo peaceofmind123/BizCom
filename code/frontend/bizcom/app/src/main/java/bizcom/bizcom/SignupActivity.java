@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -167,6 +168,8 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
         phone = phoneText.getText().toString();
         city = cityText.getText().toString();
         country = countrySpinner.getSelectedItem().toString();
+        RadioButton rb = findViewById(userSelectGroup.getCheckedRadioButtonId());
+        String userType = rb.getText().toString();
 
         //encryption
         String encryptedPass = AESCrypt.encrypt(password);
@@ -186,6 +189,7 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
         jsonObject.put("phone",encryptedPhone);
         jsonObject.put("city",city);
         jsonObject.put("country",country);
+        jsonObject.put("userType",userType);
         return jsonObject.toString();
     }
 

@@ -3,8 +3,8 @@ const uaRouter = express.Router();
 
 //define uaRouter get, post, put methods here
 uaRouter.route('/signup').post((req,res)=>{
-    print(req.body)
-
+    // the req.body object now contains the object sent from the client
+    res.send("Success")
 
 
 });
