@@ -17,7 +17,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".businessProfile" />
-        <activity android:name=".ads_activity"></activity>
+        <activity android:name=".ads_activity" />
+        <activity android:name=".signupBusinessProfile" />
+        <activity android:name=".login"></activity>
     </application>
 
 </manifest>

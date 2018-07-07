@@ -13,7 +13,7 @@ public class businessProfile extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_business_profile);
+        setContentView(R.layout.activity_profile_business);
         btn_ads = (Button) findViewById(R.id.ads_button);
 
         btn_ads.setOnClickListener(new View.OnClickListener() {

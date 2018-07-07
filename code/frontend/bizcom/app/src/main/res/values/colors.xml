@@ -5,7 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="primaryDark">#292b3d</color>
     <color name="startBlue">#09c6df</color>
-    <color name="endBlue">#0bcce6</color>
+    <color name="endBlue">#c4e7ec</color>
     <color name="greyLight">#fafafa</color>
     <color name="azure"> #f1f5f8</color>
     <color name="black">#191919</color>
@@ -15,5 +15,5 @@
     <color name="txt_grey">#999999</color>
     <color name="txt_black">#000000</color>
     <color name="orange">#f9b21a</color>
-    <color name="green">#1c4807</color>
+    <color name="green">#7ba169</color>
 </resources>
