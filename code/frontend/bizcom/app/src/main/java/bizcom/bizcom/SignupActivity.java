@@ -1,5 +1,6 @@
 package bizcom.bizcom;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
@@ -33,6 +34,7 @@ import com.basgeekball.awesomevalidation.utility.custom.SimpleCustomValidation;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
@@ -46,6 +48,11 @@ import okhttp3.Response;
 
 
 public class SignupActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+
+    // Keys to pass params as intent extras
+    // this is the key to the json object being passed
+    public static final String EXTRA_USER = "com.bizcom.bizcom.USER";
+
 
     String fName;
     EditText fNameText;
@@ -75,7 +82,7 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
     public void signUp(View view) throws Exception {
         String json= getJson();
         String url = "http://192.168.1.67:8000/userAccounts/signup";
-        new SignupPostTask().execute(url,json);
+        new SignupPostTask(this).execute(url,json);
 
 
 
@@ -241,35 +248,65 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
-}
 
-class SignupPostTask extends AsyncTask<String,Void,String>{
-    //the okhttp singleton
-    OkHttpClient client=new OkHttpClient();
-    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    private Exception exception;
-    @Override
-    protected String doInBackground(String... params) {
-        String url = params[0];
-        String json = params[1];
+    static class SignupPostTask extends AsyncTask<String,Void,String>{
+        //the okhttp singleton
+        OkHttpClient client=new OkHttpClient();
+        private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        private Exception exception;
+        private String response;
+        private String json;
+        //the weak reference object to prevent memory leaks during garbage collection of signupActivity object
+        private WeakReference<SignupActivity> signupActivityWeakReference;
 
-
-        String response = null;
-        try {
-            response = doPostRequest(url,json);
-        } catch (IOException e) {
-            e.printStackTrace();
+        SignupPostTask(SignupActivity context)
+        {
+            signupActivityWeakReference = new WeakReference<>(context);
         }
-        System.out.println(response);
-        return response;
-    }
-    private String doPostRequest(String url, String json) throws IOException,NullPointerException {
-        RequestBody body = RequestBody.create(JSON, json);
-        Request request = new Request.Builder()
-                .url(url)
-                .post(body)
-                .build();
-        Response response = client.newCall(request).execute();
-        return response.body().string();
+        @Override
+        protected String doInBackground(String... params) {
+
+            String url = params[0];
+            json = params[1];
+
+            response = null;
+            try {
+                response = doPostRequest(url, json);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return response;
+
+
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            if(response.equals("success"))
+            {
+                /* todo: after merging the login branch, uncomment this code to redirect to login
+                //create intent to redirect to login page
+                Intent intent = new Intent(this,LoginActivity.class);
+                intent.putExtra(SignupActivity.EXTRA_USER,json); //the json object is passed as a string, which will be parsed on the other side
+                signupActivityWeakReference.get().startActivity(intent);
+                */
+            }
+            else
+            {
+                // todo: give an error to the user
+            }
+        }
+
+        private String doPostRequest(String url, String json) throws IOException,NullPointerException {
+            RequestBody body = RequestBody.create(JSON, json);
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(body)
+                    .build();
+            Response response = client.newCall(request).execute();
+            return response.body().string();
+        }
     }
 }
+
+

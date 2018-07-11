@@ -1,49 +1,45 @@
 const express = require('express');
 const signupForm = express.Router();
 const UserModel = require('../models/UserModel');
-
+const async = require('async');
 
 
 
 signupForm.route('/').post((req,res)=>{
     // the req.body object now contains the object sent from the client
+    let duplicates = [];
+    let executecounter = 0; //kinda like a semaphore
+    UserModel.findOne({userName:req.body.userName},(err,user) =>{
 
-    UserModel.findOne({userName:req.body.userName},(err,user)=>{
         if(err)
-        {
             console.log(err);
-            return;
-        }
-
-        if(user!==null)
+        else if(user!==null)
         {
-            console.log(user);
-           let message = "User already registered!";
-            console.log(message);
-            res.send(message);
+            duplicates.push("username");
         }
-        else
-        {
-           let message = "success";
-           let user = new UserModel(req.body);
-            user.save((err)=>{
-                    if(err)
-                    {
-                        console.log(err);
-                        message = err;
-                    }
-                    else
-                    {
-                        console.log("User saved!")
-                    }
-                });
-
-            res.send(message);
-
-
-
-        }
+        executecounter++;
     });
+    UserModel.findOne({email:req.body.email},(err,user)=>{
+        if(err)
+            console.log(err);
+        else if(user!==null) //if user is already there
+        {
+            duplicates.push("email");
+        }
+        executecounter++;
+    });
+    UserModel.findOne({phone:req.body.phone},(err,user)=>{
+
+        if(err)
+            console.log(err);
+        else if(user!==null) //if user is already there
+        {
+            duplicates.push("phone");
+        }
+        executecounter++;
+    });
+
+
 
 
 
