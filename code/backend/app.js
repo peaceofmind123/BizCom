@@ -43,14 +43,13 @@ app.use(morgan('tiny'));
 //database connection
 
 mongoose.connect('mongodb://nripendra:havoc123@ds141401.mlab.com:41401/bizcom');
+mongoose.Promise = global.Promise;
 const db = mongoose.connection;
 db.on('error', (err)=>{
-   console.log("couldn't connect to database!!");
-   return console.log(err);
+    debug("couldn't connect to database!!");
+
 });
-db.once('open',()=>{
-    debug('connected to database');
-});
+
 //architectural division
 
 //the user accounts subsystem

@@ -9,8 +9,9 @@ let UserSchema = new Schema({
     phone: String,
     city: String,
     country: String,
-    userType: String
-});
+    userType: String,
+
+}, {collection: 'users'});
 
 let UserModel = mongoose.model('UserModel',UserSchema);
 
