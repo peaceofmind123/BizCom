@@ -1,49 +1,55 @@
 const express = require('express');
 const signupForm = express.Router();
 const UserModel = require('../models/UserModel');
-const async = require('async');
+const as = require('async');
 
+signupForm.route('/').post((req,res)=> {
+    let responseString = "";
+    UserModel.count({userName:req.body.userName},(err,count)=>{
+       if(err)
+           res.status(500).send('database error');
+       else
+       {
+           if(count>0)
+                responseString+=" username ";
+           UserModel.count({email:req.body.email},(err,count)=>{
+               if(err) {
+                   res.status(500).send('database error');
+               }
+               else
+               {
+                   if(count>0)
+                        responseString+= " email ";
+                   UserModel.count({phone:req.body.phone},(err,count)=>{
+                       if(err)
+                       {
+                           res.status(500).send("database error");
 
+                       }
+                       else
+                       {
+                           if(count > 0)
+                               responseString+= " phone ";
+                           if(responseString==="") //no duplicates
+                           {
+                               let user = new UserModel(req.body);
+                               user.save((err)=>{
+                                  if(err)
+                                  {
+                                      res.status(500).send("database error");
+                                  }
+                                  res.send("success");
+                               });
 
-signupForm.route('/').post((req,res)=>{
-    // the req.body object now contains the object sent from the client
-    let duplicates = [];
-    let executecounter = 0; //kinda like a semaphore
-    UserModel.findOne({userName:req.body.userName},(err,user) =>{
+                           }
+                           else
+                               res.send(responseString);
+                       }
+                   });
+               }
+           });
+       }
 
-        if(err)
-            console.log(err);
-        else if(user!==null)
-        {
-            duplicates.push("username");
-        }
-        executecounter++;
     });
-    UserModel.findOne({email:req.body.email},(err,user)=>{
-        if(err)
-            console.log(err);
-        else if(user!==null) //if user is already there
-        {
-            duplicates.push("email");
-        }
-        executecounter++;
-    });
-    UserModel.findOne({phone:req.body.phone},(err,user)=>{
-
-        if(err)
-            console.log(err);
-        else if(user!==null) //if user is already there
-        {
-            duplicates.push("phone");
-        }
-        executecounter++;
-    });
-
-
-
-
-
-
 });
-
 module.exports=signupForm;

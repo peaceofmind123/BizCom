@@ -132,19 +132,22 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
             }
         }, R.string.err_country);
 
-        signupBtn.setOnClickListener(new View.OnClickListener(){
+        signupBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                awesomeValidation.validate();
-                try {
-                    signUp(v);
-                } catch (Exception e) {
-                    e.printStackTrace();
+
+                if (awesomeValidation.validate()) {
+                    try {
+                        signUp(v);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
 
             }
         });
+
         tosAccept.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -196,6 +199,10 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
         jsonObject.put("phone",encryptedPhone);
         jsonObject.put("city",city);
         jsonObject.put("country",country);
+        if(userType.equals("Sign Up as Business"))
+            userType = "business";
+        else
+            userType = "general";
         jsonObject.put("userType",userType);
         return jsonObject.toString();
     }
@@ -275,6 +282,7 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
             return response;
 
 
@@ -282,6 +290,7 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
 
         @Override
         protected void onPostExecute(String response) {
+
             if(response.equals("success"))
             {
                 /* todo: after merging the login branch, uncomment this code to redirect to login
