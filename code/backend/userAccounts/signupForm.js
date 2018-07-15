@@ -14,7 +14,7 @@ signupForm.route('/').post((req,res)=> {
                 responseString+=" username ";
            UserModel.count({email:req.body.email},(err,count)=>{
                if(err) {
-                   res.status(500).send('database error');
+                   res.send('database error');
                }
                else
                {
@@ -23,7 +23,7 @@ signupForm.route('/').post((req,res)=> {
                    UserModel.count({phone:req.body.phone},(err,count)=>{
                        if(err)
                        {
-                           res.status(500).send("database error");
+                           res.send("database error");
 
                        }
                        else
@@ -36,7 +36,7 @@ signupForm.route('/').post((req,res)=> {
                                user.save((err)=>{
                                   if(err)
                                   {
-                                      res.status(500).send("database error");
+                                      res.send("database error");
                                   }
                                   res.send("success");
                                });

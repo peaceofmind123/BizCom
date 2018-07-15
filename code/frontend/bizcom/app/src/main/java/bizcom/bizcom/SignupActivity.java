@@ -194,6 +194,7 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
         jsonObject.put("fName",fName);
         jsonObject.put("lName",lName);
         jsonObject.put("userName",userName);
+        jsonObject.put("email",email);
         jsonObject.put("password",encryptedPass);
         jsonObject.put("confirmPassword",encryptedPassConfirm);
         jsonObject.put("phone",encryptedPhone);
@@ -290,7 +291,7 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
 
         @Override
         protected void onPostExecute(String response) {
-
+            System.out.println(response);
             if(response.equals("success"))
             {
                 /* todo: after merging the login branch, uncomment this code to redirect to login
