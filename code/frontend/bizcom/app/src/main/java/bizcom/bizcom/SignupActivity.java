@@ -251,7 +251,33 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
         countrySpinner.setOnItemSelectedListener(this);
     }
 
+    //called by signupposttask
+    void handlePostResponse(String response)
+    {
+        try {
+            if(response.equals("success"))
+            {
+                /*todo: redirect to login*/
+            }
+            else if(response.equals("database error"))
+            {
+                /*todo: signal a database error to the user*/
+            }
+            else //means that there are some duplicates
+            {
+                String[] duplicates = response.split("\\s+"); //splitting with space
 
+                for(int i =0;i<duplicates.length;i++)
+                {
+                    System.out.println(duplicates[i]);
+                }
+            }
+        }
+        catch (NullPointerException e)
+        {
+            e.printStackTrace();
+        }
+    }
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         //since we only have one adapter view, we can safely assume the parent is the countries spinner

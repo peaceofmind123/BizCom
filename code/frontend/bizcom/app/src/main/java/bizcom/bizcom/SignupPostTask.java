@@ -12,6 +12,12 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class SignupPostTask extends AsyncTask<String,Void,String> {
+    public interface SignupPostTaskInterface
+    {
+        public void getResponse(String response);
+
+    }
+    SignupPostTaskInterface anInterface;
 
     //the okhttp singleton
     OkHttpClient client=new OkHttpClient();
@@ -46,27 +52,8 @@ public class SignupPostTask extends AsyncTask<String,Void,String> {
 
     @Override
     protected void onPostExecute(String response) {
-        try
-        {
-            System.out.println(response);
-            if(response.equals("success"))
-            {
-                /* todo: after merging the login branch, uncomment this code to redirect to login
-                //create intent to redirect to login page
-                Intent intent = new Intent(this,LoginActivity.class);
-                intent.putExtra(SignupActivity.EXTRA_USER,json); //the json object is passed as a string, which will be parsed on the other side
-                signupActivityWeakReference.get().startActivity(intent);
-                */
-            }
-            else
-            {
-                // todo: give an error to the user
-            }
-        }
-        catch(NullPointerException e) //happens when there is a network error which results in a null response
-        {
-            e.printStackTrace(); //todo: send some response to the user
-        }
+
+        signupActivityWeakReference.get().handlePostResponse(response);
     }
 
     private String doPostRequest(String url, String json) throws IOException,NullPointerException {
