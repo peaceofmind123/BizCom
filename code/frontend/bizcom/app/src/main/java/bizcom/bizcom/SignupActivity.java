@@ -1,9 +1,13 @@
 package bizcom.bizcom;
 
+import android.app.DialogFragment;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -47,7 +51,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
-public class SignupActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener,InternetCheck.AsyncResponse {
+public class SignupActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, InternetUnavaliableDialogFragment.InternetUnavailableListener {
 
     // Keys to pass params as intent extras
     // this is the key to the json object being passed
@@ -80,15 +84,17 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
 
 
     public void signUp(View view) throws Exception {
-        String json= getJson();
-        String url = "http://192.168.1.67:8000/userAccounts/signup";
 
-        InternetCheck check = new InternetCheck();
-        new SignupPostTask(this).execute(url,json);
+        if(isConnectedToInternet())
+        {
+            new SignupPostTask(this).execute(getString(R.string.url),getJson());
+        }
+    }
 
-
-
-
+    private boolean isConnectedToInternet() {
+        ConnectivityManager cm = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork!=null && activeNetwork.isConnectedOrConnecting();
     }
 
 
@@ -154,14 +160,11 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
         tosAccept.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked)
-                {
+                if (isChecked) {
                     //enable signup button if tos accept is selected
                     signupBtn.setEnabled(true);
                     signupBtn.setBackgroundColor(SignupActivity.this.getResources().getColor(R.color.colorPrimary));
-                }
-                else
-                {
+                } else {
                     signupBtn.setEnabled(false);
                     signupBtn.setBackgroundColor(SignupActivity.this.getResources().getColor(R.color.graycolor));
 
@@ -188,26 +191,26 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
         String encryptedPass = AESCrypt.encrypt(password);
         String encryptedPassConfirm = AESCrypt.encrypt(confirmPassword);
         String encryptedPhone = AESCrypt.encrypt(phone);
-        encryptedPass=encryptedPass.substring(0,encryptedPass.length()-1); //apparently there is a /n at the end that causes errors, so truncated it
-        encryptedPassConfirm = encryptedPassConfirm.substring(0,encryptedPassConfirm.length()-1); // gotta consider it on the backend too
-        encryptedPhone = encryptedPhone.substring(0,encryptedPhone.length()-1);
+        encryptedPass = encryptedPass.substring(0, encryptedPass.length() - 1); //apparently there is a /n at the end that causes errors, so truncated it
+        encryptedPassConfirm = encryptedPassConfirm.substring(0, encryptedPassConfirm.length() - 1); // gotta consider it on the backend too
+        encryptedPhone = encryptedPhone.substring(0, encryptedPhone.length() - 1);
 
         // converting to json
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("fName",fName);
-        jsonObject.put("lName",lName);
-        jsonObject.put("userName",userName);
-        jsonObject.put("email",email);
-        jsonObject.put("password",encryptedPass);
-        jsonObject.put("confirmPassword",encryptedPassConfirm);
-        jsonObject.put("phone",encryptedPhone);
-        jsonObject.put("city",city);
-        jsonObject.put("country",country);
-        if(userType.equals("Sign Up as Business"))
+        jsonObject.put("fName", fName);
+        jsonObject.put("lName", lName);
+        jsonObject.put("userName", userName);
+        jsonObject.put("email", email);
+        jsonObject.put("password", encryptedPass);
+        jsonObject.put("confirmPassword", encryptedPassConfirm);
+        jsonObject.put("phone", encryptedPhone);
+        jsonObject.put("city", city);
+        jsonObject.put("country", country);
+        if (userType.equals("Sign Up as Business"))
             userType = "business";
         else
             userType = "general";
-        jsonObject.put("userType",userType);
+        jsonObject.put("userType", userType);
         return jsonObject.toString();
     }
 
@@ -221,7 +224,7 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
             }
         }
         Collections.sort(countries);
-        countries.add(0,"-select country-");
+        countries.add(0, "-select country-");
     }
 
     private void updateUI() {
@@ -240,7 +243,7 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
         signupBtn = findViewById(R.id.btnSignup);
         signupBtn.setEnabled(false); //disabled by default, enabled after the tos has been checked
         signupBtn.setBackgroundColor(this.getResources().getColor(R.color.graycolor));
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,countries);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, countries);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         countrySpinner.setAdapter(adapter);
         String currentCountry = this.getResources().getConfiguration().locale.getCountry();
@@ -251,7 +254,7 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            //since we only have one adapter view, we can safely assume the parent is the countries spinner
+        //since we only have one adapter view, we can safely assume the parent is the countries spinner
         country = parent.getItemAtPosition(position).toString();
     }
 
@@ -261,77 +264,9 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
     }
 
     @Override
-    public void accept(Boolean internet) {
+    public void onDialogPositiveClick(DialogFragment dialog) {
 
     }
 
-    static class SignupPostTask extends AsyncTask<String,Void,String>{
-        //the okhttp singleton
-        OkHttpClient client=new OkHttpClient();
-        private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-        private Exception exception;
-        private String response;
-        private String json;
-        //the weak reference object to prevent memory leaks during garbage collection of signupActivity object
-        private WeakReference<SignupActivity> signupActivityWeakReference;
-
-        SignupPostTask(SignupActivity context)
-        {
-            signupActivityWeakReference = new WeakReference<>(context);
-        }
-        @Override
-        protected String doInBackground(String... params) {
-
-            String url = params[0];
-            json = params[1];
-
-            response = null;
-            try {
-                response = doPostRequest(url, json);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return response;
-
-
-        }
-
-        @Override
-        protected void onPostExecute(String response) {
-            try
-            {
-                System.out.println(response);
-                if(response.equals("success"))
-                {
-                /* todo: after merging the login branch, uncomment this code to redirect to login
-                //create intent to redirect to login page
-                Intent intent = new Intent(this,LoginActivity.class);
-                intent.putExtra(SignupActivity.EXTRA_USER,json); //the json object is passed as a string, which will be parsed on the other side
-                signupActivityWeakReference.get().startActivity(intent);
-                */
-                }
-                else
-                {
-                    // todo: give an error to the user
-                }
-            }
-            catch(NullPointerException e) //happens when there is a network error which results in a null response
-            {
-                e.printStackTrace(); //todo: send some response to the user
-            }
-        }
-
-        private String doPostRequest(String url, String json) throws IOException,NullPointerException {
-            RequestBody body = RequestBody.create(JSON, json);
-            Request request = new Request.Builder()
-                    .url(url)
-                    .post(body)
-                    .build();
-            Response response = client.newCall(request).execute();
-            return response.body().string();
-        }
-    }
 }
-
 
