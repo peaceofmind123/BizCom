@@ -79,6 +79,8 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
         }
         else
         {
+            progressBar = findViewById(R.id.progressBar);
+            progressBar.setVisibility(View.GONE);
             showDialogFragment(R.string.dialog_internet_unavailable);
         }
     }
