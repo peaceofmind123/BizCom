@@ -13,6 +13,8 @@ import android.os.Bundle;
 
 public class BizcomDialogFragment extends DialogFragment {
     private int resourceID;
+    private String message;
+
     public interface InternetUnavailableListener {
         public void onDialogPositiveClick(DialogFragment dialog);
     }
@@ -45,13 +47,29 @@ public class BizcomDialogFragment extends DialogFragment {
         return f;
 
     }
+    public static BizcomDialogFragment newInstance(String message)
+    {
+        BizcomDialogFragment f = new BizcomDialogFragment();
+        Bundle args = new Bundle();
+        args.putString("message",message);
+        f.setArguments(args);
+        return f;
+    }
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle args = getArguments();
-        this.resourceID = args.getInt("resourceID",R.string.dialog_internet_unavailable); //the default parameter
+        this.resourceID = args.getInt("resourceID",R.string.NullResID); //the default parameter
+        this.message = args.getString("message",getString(R.string.NullResID));
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(this.resourceID)
+        if(this.resourceID ==R.string.NullResID)
+        {
+            builder.setMessage(this.message);
+        }
+        else
+            builder.setMessage(this.resourceID);
+
+        builder
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

@@ -1,5 +1,6 @@
 package bizcom.bizcom;
 
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.graphics.Color;
@@ -87,9 +88,13 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
 
     private void showDialogFragment(int resourceID) {
         DialogFragment newFragment = BizcomDialogFragment.newInstance(resourceID);
-        newFragment.show(getFragmentManager(),"internetUnavailable");
+        newFragment.show(getFragmentManager(),"dialog ".concat(getString(resourceID)));
     }
-
+    private void showDialogFragment(String message)
+    {
+        DialogFragment newFragment = BizcomDialogFragment.newInstance(message);
+        newFragment.show(getFragmentManager(),"dialog ".concat(message));
+    }
     private boolean isConnectedToInternet() {
         ConnectivityManager cm = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -263,6 +268,8 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
             if(response.equals("success"))
             {
                 /*todo: redirect to login*/
+
+                showDialogFragment(R.string.signupSuccess);
             }
             else if(response.equals("database error"))
             {
@@ -272,11 +279,41 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
             else //means that there are some duplicates
             {
                 String[] duplicates = response.split("\\s+"); //splitting with space
-
-                for(int i =0;i<duplicates.length;i++)
+                String s = "Duplicate ";
+                for(int i =1;i<duplicates.length;i++)
                 {
-                    System.out.println(duplicates[i]);
+                    if(duplicates[i].equals("username"))
+                    {
+                        this.userNameText = findViewById(R.id.userName);
+                        this.userNameText.setError("Duplicate Username");
+                    }
+                    else if(duplicates[i].equals("email"))
+                    {
+                        this.emailText = findViewById(R.id.email);
+                        this.emailText.setError("Duplicate Email");
+                    }
+                    else if(duplicates[i].equals("phone"))
+                    {
+                        this.phoneText = findViewById(R.id.phone);
+                        this.phoneText.setError("Duplicate phone number");
+                    }
+                    s=s.concat(duplicates[i]);
+                    if(i<duplicates.length-2)
+                    {
+                        s=s.concat(", ");
+                    }
+                    else if(i==duplicates.length-2)
+                    {
+                        s=s.concat(" and ");
+
+                    }
+                    else
+                    {
+                        s = s.concat(".");
+                    }
+
                 }
+                showDialogFragment(s);
             }
         }
         catch (NullPointerException e) //triggered when there is a timeout from the server
