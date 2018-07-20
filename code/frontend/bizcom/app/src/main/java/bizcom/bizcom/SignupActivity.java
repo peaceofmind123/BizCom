@@ -2,13 +2,10 @@ package bizcom.bizcom;
 
 import android.app.DialogFragment;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +15,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -32,32 +30,22 @@ import com.basgeekball.awesomevalidation.utility.RegexTemplate;
 import com.basgeekball.awesomevalidation.utility.custom.CustomErrorReset;
 import com.basgeekball.awesomevalidation.utility.custom.CustomValidation;
 import com.basgeekball.awesomevalidation.utility.custom.CustomValidationCallback;
-import com.basgeekball.awesomevalidation.utility.custom.SimpleCustomValidation;
 
 
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
-import java.util.regex.Pattern;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 
-public class SignupActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, InternetUnavaliableDialogFragment.InternetUnavailableListener {
+public class SignupActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, BizcomDialogFragment.InternetUnavailableListener {
 
     // Keys to pass params as intent extras
     // this is the key to the json object being passed
     public static final String EXTRA_USER = "com.bizcom.bizcom.USER";
 
-
+    ProgressBar progressBar;
     String fName;
     EditText fNameText;
     EditText lNameText;
@@ -89,6 +77,15 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
         {
             new SignupPostTask(this).execute(getString(R.string.url),getJson());
         }
+        else
+        {
+            showDialogFragment(R.string.dialog_internet_unavailable);
+        }
+    }
+
+    private void showDialogFragment(int resourceID) {
+        DialogFragment newFragment = BizcomDialogFragment.newInstance(resourceID);
+        newFragment.show(getFragmentManager(),"internetUnavailable");
     }
 
     private boolean isConnectedToInternet() {
@@ -102,6 +99,8 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE); //initially invisible
         getCountries();
         updateUI();
 
@@ -147,6 +146,8 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
             public void onClick(View v) {
 
                 if (awesomeValidation.validate()) {
+                    progressBar = findViewById(R.id.progressBar);
+                    progressBar.setVisibility(View.VISIBLE); //show progressbar
                     try {
                         signUp(v);
                     } catch (Exception e) {
@@ -254,6 +255,8 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
     //called by signupposttask
     void handlePostResponse(String response)
     {
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
         try {
             if(response.equals("success"))
             {
@@ -262,6 +265,7 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
             else if(response.equals("database error"))
             {
                 /*todo: signal a database error to the user*/
+                showDialogFragment(R.string.dialog_server_error);
             }
             else //means that there are some duplicates
             {
@@ -273,9 +277,9 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
                 }
             }
         }
-        catch (NullPointerException e)
+        catch (NullPointerException e) //triggered when there is a timeout from the server
         {
-            e.printStackTrace();
+            showDialogFragment(R.string.dialog_server_error);
         }
     }
     @Override
@@ -289,6 +293,7 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
 
     }
 
+    //event handler when the internetunavailable dialog gets an ok response
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
 

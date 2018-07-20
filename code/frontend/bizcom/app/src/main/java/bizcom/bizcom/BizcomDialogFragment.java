@@ -11,10 +11,14 @@ import android.os.Bundle;
  * Created by Satan on 7/19/2018.
  */
 
-public class InternetUnavaliableDialogFragment extends DialogFragment {
+public class BizcomDialogFragment extends DialogFragment {
+    private int resourceID;
     public interface InternetUnavailableListener {
         public void onDialogPositiveClick(DialogFragment dialog);
     }
+
+
+
 
     InternetUnavailableListener listener;
     @Override
@@ -32,15 +36,26 @@ public class InternetUnavaliableDialogFragment extends DialogFragment {
 
         }
     }
+    public static BizcomDialogFragment newInstance(int resourceID)
+    {
+        BizcomDialogFragment f = new BizcomDialogFragment();
+        Bundle args = new Bundle();
+        args.putInt("resourceID",resourceID);
+        f.setArguments(args);
+        return f;
+
+    }
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Bundle args = getArguments();
+        this.resourceID = args.getInt("resourceID",R.string.dialog_internet_unavailable); //the default parameter
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.dialog_internet_unavailable)
+        builder.setMessage(this.resourceID)
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        listener.onDialogPositiveClick(InternetUnavaliableDialogFragment.this); //redirect the event to the parent
+                        listener.onDialogPositiveClick(BizcomDialogFragment.this); //redirect the event to the parent
                     }
                 });
         return builder.create();

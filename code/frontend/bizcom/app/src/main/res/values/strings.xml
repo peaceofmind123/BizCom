@@ -14,5 +14,6 @@
     <string name="dialog_internet_unavailable">Please connect to internet to continue</string>
 
     <string name="url">http://192.168.1.67:8000/userAccounts/signup</string>
+    <string name="dialog_server_error">A server error occoured, please try again later</string>
 
 </resources>
