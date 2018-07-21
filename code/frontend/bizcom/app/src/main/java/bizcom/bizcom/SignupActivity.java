@@ -46,6 +46,7 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
     // Keys to pass params as intent extras
     // this is the key to the json object being passed
     public static final String EXTRA_USER = "com.bizcom.bizcom.USER";
+    public static final String EXTRA_PHONE = "com.bizcom.bizcom.PHONE";
 
     ProgressBar progressBar;
     String fName;
@@ -75,7 +76,7 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
 
     public void signUp(View view) throws Exception {
 
-        if(isConnectedToInternet())
+        if(InternetCheckHelper.isInternetConnected(this))
         {
             new SignupPostTask(this).execute(getString(R.string.url),getJson());
         }
@@ -83,24 +84,11 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
         {
             progressBar = findViewById(R.id.progressBar);
             progressBar.setVisibility(View.GONE);
-            showDialogFragment(R.string.dialog_internet_unavailable);
+            DialogFragmentHelper.showDialogFragment(this,R.string.dialog_internet_unavailable);
         }
     }
 
-    private void showDialogFragment(int resourceID) {
-        DialogFragment newFragment = BizcomDialogFragment.newInstance(resourceID);
-        newFragment.show(getFragmentManager(),"dialog ".concat(getString(resourceID)));
-    }
-    private void showDialogFragment(String message)
-    {
-        DialogFragment newFragment = BizcomDialogFragment.newInstance(message);
-        newFragment.show(getFragmentManager(),"dialog ".concat(message));
-    }
-    private boolean isConnectedToInternet() {
-        ConnectivityManager cm = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork!=null && activeNetwork.isConnectedOrConnecting();
-    }
+
 
 
     @Override
@@ -270,13 +258,14 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
             {
 
                 Intent intent = new Intent(SignupActivity.this,ConfirmationActivity.class);
+                intent.putExtra(EXTRA_PHONE,SignupActivity.this.phone);
                 startActivity(intent);
 
             }
             else if(response.equals("database error"))
             {
                 /*todo: signal a database error to the user*/
-                showDialogFragment(R.string.dialog_server_error);
+                DialogFragmentHelper.showDialogFragment(this,R.string.dialog_server_error);
             }
             else //means that there are some duplicates
             {
@@ -315,12 +304,12 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
                     }
 
                 }
-                showDialogFragment(s);
+                DialogFragmentHelper.showDialogFragment(this,s);
             }
         }
         catch (NullPointerException e) //triggered when there is a timeout from the server
         {
-            showDialogFragment(R.string.dialog_server_error);
+            DialogFragmentHelper.showDialogFragment(this,R.string.dialog_server_error);
         }
     }
     @Override
