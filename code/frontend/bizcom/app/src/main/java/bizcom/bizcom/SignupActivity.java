@@ -267,7 +267,7 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
         try {
             if(response.equals("success"))
             {
-                /*todo: redirect to login*/
+
 
                 showDialogFragment(R.string.signupSuccess);
             }
