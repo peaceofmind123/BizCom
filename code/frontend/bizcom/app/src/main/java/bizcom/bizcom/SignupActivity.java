@@ -3,6 +3,7 @@ package bizcom.bizcom;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -268,8 +269,9 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
             if(response.equals("success"))
             {
 
+                Intent intent = new Intent(SignupActivity.this,ConfirmationActivity.class);
+                startActivity(intent);
 
-                showDialogFragment(R.string.signupSuccess);
             }
             else if(response.equals("database error"))
             {

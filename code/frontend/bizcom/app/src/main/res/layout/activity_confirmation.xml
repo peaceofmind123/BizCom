@@ -13,13 +13,12 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="37dp"
-        android:text="TextView"
+        android:text="We have sent an SMS to your phone, please enter the confirmation code below to continue"
         android:textAlignment="center"
         android:textColor="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="We have sent an SMS to your phone, please enter the confirmation code below to continue" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/confirmationCode"
