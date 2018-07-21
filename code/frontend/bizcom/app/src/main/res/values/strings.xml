@@ -17,5 +17,6 @@
     <string name="dialog_server_error">A server error occoured, please try again later</string>
     <string name="NullResID">Null</string>
     <string name="signupSuccess">You have been signed up!</string>
+    <string name="urlConfirmation">http://192.168.1.67/userAccounts/confirm</string>
 
 </resources>

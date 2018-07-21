@@ -12,12 +12,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class SignupPostTask extends AsyncTask<String,Void,String> {
-    public interface SignupPostTaskInterface
-    {
-        public void getResponse(String response);
 
-    }
-    SignupPostTaskInterface anInterface;
 
     //the okhttp singleton
     OkHttpClient client=new OkHttpClient();
