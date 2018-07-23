@@ -36,12 +36,13 @@ public class ConfirmationActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirmation);
+        phone = getIntent().getStringExtra(SignupActivity.EXTRA_PHONE);
         sendConfirmationSMS();
         confirmationEditText = findViewById(R.id.confirmationCode);
         btnConfirm = findViewById(R.id.btnConfirm);
         btnConfirm.setEnabled(false);
         btnConfirm.setBackgroundColor(ConfirmationActivity.this.getResources().getColor(R.color.graycolor));
-        phone = getIntent().getStringExtra(SignupActivity.EXTRA_PHONE);
+
 
 
 
@@ -97,11 +98,12 @@ public class ConfirmationActivity extends AppCompatActivity{
 
     public void handleConfirmationResponse(String response)
     {
-        if(response==null)
+        if(response=="")
         {
             DialogFragment newFragment = BizcomDialogFragment.newInstance(R.string.dialog_server_error);
 
             newFragment.show(this.getFragmentManager(),"dialog ".concat(this.getString(R.string.dialog_server_error)));
+            newFragment.getFragmentManager().executePendingTransactions();
             newFragment.getDialog().setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialog) {
@@ -146,10 +148,12 @@ class ConfirmBackgroundTask extends AsyncTask<String,Void,String>{
         catch(JSONException e)
         {
             e.printStackTrace();
+            response = "";
         }
         catch(IOException e) //means that the call wasn't responded
         {
-            response = null;
+            response = "";
+
         }
         return response;
 
