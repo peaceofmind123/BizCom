@@ -2,7 +2,6 @@ package bizcom.bizcom;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.Icon;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,20 +12,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     public final String EXTRA_USER = "bizcom.bizcom.USER";
@@ -56,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         if ((user.length() != 0) && (pass.length() != 0)) {
             //if not null and credentials match
             /*if((user.equals("aashish")) && (pass.equals("sayami"))){
-                Intent intent = new Intent(this,SecondActivity.class);
+                Intent intent = new Intent(this,HomeActivity.class);
                 startActivity(intent);
             */
             return true;
@@ -226,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                                    String user = response.toString();
-                                   Intent intent = new Intent(MainActivity.this,SecondActivity.class);
+                                   Intent intent = new Intent(MainActivity.this,HomeActivity.class);
                                    intent.putExtra(EXTRA_USER,user);
                                    startActivity(intent);
 

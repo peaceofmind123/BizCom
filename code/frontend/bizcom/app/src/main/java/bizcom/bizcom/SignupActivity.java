@@ -44,10 +44,12 @@ import java.util.Locale;
 public class SignupActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, BizcomDialogFragment.InternetUnavailableListener {
 
     // Keys to pass params as intent extras
-    // this is the key to the json object being passed
-    public static final String EXTRA_USER = "com.bizcom.bizcom.USER";
-    public static final String EXTRA_PHONE = "com.bizcom.bizcom.PHONE";
 
+
+    public static final String EXTRA_EMAIL = "com.bizcom.bizcom.EMAIL";
+    public static final String EXTRA_USERNAME = "com.bizcom.bizcom.USERNAME";
+    public static final String EXTRA_USER_JSON = "com.bizcom.bizcom.USER_JSON";
+    public static final String EXTRA_USERTYPE = "com.bizcom.bizcom.USERTYPE";
     ProgressBar progressBar;
     String fName;
     EditText fNameText;
@@ -72,6 +74,8 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
     String country;
     AwesomeValidation awesomeValidation;
     ArrayList<String> countries;
+    private String userType;
+    private String jsonUser;
 
 
     public void signUp(View view) throws Exception {
@@ -182,7 +186,7 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
         city = cityText.getText().toString();
         country = countrySpinner.getSelectedItem().toString();
         RadioButton rb = findViewById(userSelectGroup.getCheckedRadioButtonId());
-        String userType = rb.getText().toString();
+        userType = rb.getText().toString();
 
         //encryption
         String encryptedPass = AESCrypt.encrypt(password);
@@ -208,7 +212,8 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
         else
             userType = "general";
         jsonObject.put("userType", userType);
-        return jsonObject.toString();
+        jsonUser = jsonObject.toString();
+        return jsonUser;
     }
 
     private void getCountries() {
@@ -258,7 +263,11 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
             {
 
                 Intent intent = new Intent(SignupActivity.this,ConfirmationActivity.class);
-                intent.putExtra(EXTRA_PHONE,SignupActivity.this.phone);
+                intent.putExtra(EXTRA_EMAIL,SignupActivity.this.email);
+                intent.putExtra(EXTRA_USERNAME,SignupActivity.this.userName);
+                intent.putExtra(EXTRA_USERTYPE,SignupActivity.this.userType);
+                intent.putExtra(EXTRA_USER_JSON,SignupActivity.this.jsonUser);
+
                 startActivity(intent);
 
             }

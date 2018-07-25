@@ -11,7 +11,8 @@ let UserSchema = new Schema({
     city: String,
     country: String,
     userType: String,
-    isUserRegistered:{type:Boolean,default:false}
+    isUserRegistered:{type:Boolean,default:false},
+    confirmationCode: String
 
 
 }, {collection: 'users'});
