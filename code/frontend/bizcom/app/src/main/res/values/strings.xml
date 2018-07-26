@@ -6,24 +6,31 @@
     <string name="err_email">Please enter a valid email</string>
     <string name="err_password">Password must be at least 8 characters long and must contain
              at least one number, one uppercase and one lowercase symbol</string>
-    <string name="Register"><u>Not registered yet??Signup </u></string>
+    <string name="Register"><u>Not registered yet?? Signup </u></string>
     <string name="err_confirmpassword">Passwords do not match</string>
     <string name="err_phone">Please enter a valid phone number</string>
     <string name="err_city">Please enter a valid city name</string>
     <string name="err_country">Please enter a valid country</string>
     <string name="err_tosaccept">Cannot signup without accepting Terms of service</string>
     <string name="dialog_internet_unavailable">Please connect to internet to continue</string>
-
+    <string name="confirmation_sent">We have sent a confirmation code to your email address,
+        please enter the confirmation code below to continue</string>
     <string name="url">http://192.168.1.67:8000/userAccounts/signup</string>
     <string name="dialog_server_error">A server error occoured, please try again later</string>
     <string name="NullResID">Null</string>
     <string name="signupSuccess">You have been signed up!</string>
     <string name="urlConfirmation">http://192.168.1.67:8000/userAccounts/confirmation/confirmAccount</string>
     <string name="err_general">error</string>
+    <string name="success">success</string>
     <string name="err_server_nonresponsive">server nonresponsive</string>
     <string name="err_send_email">error sending email</string>
     <string name="err_server">server error</string>
     <string name="urlConfirmationConfirm">http://192.168.1.67:8000/userAccounts/confirmation/confirm</string>
     <string name="err_confirmation_incorrect">incorrect confirmation code</string>
-
+    <string name="err_server_dialogMsg">A server error occoured. Please try again.</string>
+    <string name="err_general_dialogMsg">Something went wrong. Please try again</string>
+    <string name="err_server_nonresponsive_dialogMsg">There was some problem with the network connection. Please try again.</string>
+    <string name="err_confirmation_incorrect_dialogMsg">The confirmation code you entered was incorrect. Please enter the correct code to continue.</string>
+    <string name="forgot_password_text">Forgot Password</string>
+    <string name="forgot_password_heading">Please enter your registered email address to continue</string>
 </resources>

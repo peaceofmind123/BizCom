@@ -10,15 +10,19 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.SparseArray;
+import android.util.SparseIntArray;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -33,6 +37,7 @@ public class ConfirmationActivity extends AppCompatActivity implements BizcomDia
     String email;
     String userName;
     String userType;
+    ProgressBar progressBarConfirm;
     private String url;
     private String confirmationConfirmUrl;
     private String jsonStringUser;
@@ -42,6 +47,9 @@ public class ConfirmationActivity extends AppCompatActivity implements BizcomDia
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirmation);
+        progressBarConfirm = findViewById(R.id.progressbarConfirmation);
+        progressBarConfirm.setVisibility(View.GONE);
+
         email = getIntent().getStringExtra(SignupActivity.EXTRA_EMAIL);
         userName = getIntent().getStringExtra(SignupActivity.EXTRA_USERNAME);
         userType = getIntent().getStringExtra(SignupActivity.EXTRA_USERTYPE);
@@ -58,9 +66,11 @@ public class ConfirmationActivity extends AppCompatActivity implements BizcomDia
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressBarConfirm.setVisibility(View.VISIBLE);
                 if(!InternetCheckHelper.isInternetConnected(ConfirmationActivity.this))
                 {
                     DialogFragmentHelper.showDialogFragment(ConfirmationActivity.this,R.string.dialog_internet_unavailable);
+                    progressBarConfirm.setVisibility(View.GONE);
                 }
                 else
                 {
@@ -109,6 +119,7 @@ public class ConfirmationActivity extends AppCompatActivity implements BizcomDia
 
     public void handleConfirmationResponse(String response)
     {
+        progressBarConfirm.setVisibility(View.GONE);
         if(response.equals(getString(R.string.err_server_nonresponsive)) ||
                 response.equals(getString(R.string.err_send_email)) ||
                 response.equals(getString(R.string.err_server)))
@@ -135,12 +146,13 @@ public class ConfirmationActivity extends AppCompatActivity implements BizcomDia
 
     public void handleConfirmButtonPressedResponse(String response) { // when the user presses confirm
         System.out.println(response);
+        HashMap<String,String> responseMap = mapResponses(); //maps responses with their dialog messages
         if(response.equals(getString(R.string.err_server)) ||
                 response.equals(getString(R.string.err_general)) ||
                 response.equals(getString(R.string.err_server_nonresponsive)) ||
                 response.equals(getString(R.string.err_confirmation_incorrect)))
         {
-            DialogFragmentHelper.showDialogFragment(this,response);
+            DialogFragmentHelper.showDialogFragment(this,responseMap.get(response));
         }
         else //means no errors
         {
@@ -153,6 +165,15 @@ public class ConfirmationActivity extends AppCompatActivity implements BizcomDia
                 startProfileActivity();
             }
         }
+    }
+
+    private HashMap<String,String> mapResponses() {
+        HashMap<String,String> responseMap = new HashMap<>(4);
+        responseMap.put(getString(R.string.err_server),getString(R.string.err_server_dialogMsg));
+        responseMap.put(getString(R.string.err_general), getString(R.string.err_general_dialogMsg));
+        responseMap.put(getString(R.string.err_server_nonresponsive),getString(R.string.err_server_nonresponsive_dialogMsg));
+        responseMap.put(getString(R.string.err_confirmation_incorrect),getString(R.string.err_confirmation_incorrect_dialogMsg));
+        return responseMap;
     }
 
     private void startProfileActivity() {

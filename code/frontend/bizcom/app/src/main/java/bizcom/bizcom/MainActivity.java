@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText Password;
     private Button Login;
     private TextView Signup; //this is for unregistered users
+    private TextView ForgotPassword;
     String jsonUrl = "http://192.168.1.67:8000/userAccounts/login";
 
 
@@ -117,6 +118,14 @@ public class MainActivity extends AppCompatActivity {
         Password = (EditText) findViewById((R.id.etPass));
         Login = (Button) findViewById((R.id.btnlogin));
         Signup = (TextView) findViewById((R.id.etSignup));
+        ForgotPassword = findViewById(R.id.textForgotPassword);
+        ForgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,ForgotPasswordActivity.class);
+                startActivity(intent);
+            }
+        });
 
         Signup.setOnClickListener(new View.OnClickListener() {
             @Override
