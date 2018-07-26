@@ -24,6 +24,7 @@
     <string name="success">success</string>
     <string name="err_server_nonresponsive">server nonresponsive</string>
     <string name="err_send_email">error sending email</string>
+    <string name="err_email_notFound">email not found</string>
     <string name="err_server">server error</string>
     <string name="urlConfirmationConfirm">http://192.168.1.67:8000/userAccounts/confirmation/confirm</string>
     <string name="err_confirmation_incorrect">incorrect confirmation code</string>
@@ -33,4 +34,8 @@
     <string name="err_confirmation_incorrect_dialogMsg">The confirmation code you entered was incorrect. Please enter the correct code to continue.</string>
     <string name="forgot_password_text">Forgot Password</string>
     <string name="forgot_password_heading">Please enter your registered email address to continue</string>
+    <string name="success_email_sent">email sent</string>
+    <string name="urlforgotPasswordSendEmail">http://192.168.1.67:8000/userAccounts/forgotPassword/sendForgotCode</string>
+    <string name="forgotPasswordEnterCodeHeading">Please enter the code you received in your email to continue</string>
+    <string name="urlforgotPasswordSendCode">http://192.168.1.67:8000/userAccounts/forgotPassword/sendForgotCode</string>
 </resources>

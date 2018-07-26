@@ -12,7 +12,8 @@ let UserSchema = new Schema({
     country: String,
     userType: String,
     isUserRegistered:{type:Boolean,default:false},
-    confirmationCode: String
+    confirmationCode: String,
+    forgotPasswordCode:String
 
 
 }, {collection: 'users'});

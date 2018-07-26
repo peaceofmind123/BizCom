@@ -30,7 +30,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ConfirmationActivity extends AppCompatActivity implements BizcomDialogFragment.InternetUnavailableListener{
+public class ConfirmationActivity extends AppCompatActivity{
     Button btnConfirm;
     EditText confirmationEditText;
 
@@ -139,10 +139,6 @@ public class ConfirmationActivity extends AppCompatActivity implements BizcomDia
 
     }
 
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
-
-    }
 
     public void handleConfirmButtonPressedResponse(String response) { // when the user presses confirm
         System.out.println(response);

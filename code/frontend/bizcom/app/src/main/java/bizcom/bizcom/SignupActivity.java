@@ -41,7 +41,7 @@ import java.util.Collections;
 import java.util.Locale;
 
 
-public class SignupActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, BizcomDialogFragment.InternetUnavailableListener {
+public class SignupActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
     // Keys to pass params as intent extras
 
@@ -332,11 +332,7 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
 
     }
 
-    //event handler when the internetunavailable dialog gets an ok response
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
 
-    }
 
 }
 

@@ -1,6 +1,6 @@
 package bizcom.bizcom;
 
-import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,7 +11,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
@@ -31,9 +31,11 @@ import okhttp3.Response;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
 
+    public static final String EXTRA_FORGOT_EMAIL = "bizcom.bizcom.FORGOT_EMAIL";
     private Button forgotPasswordBtn;
     private EditText forgotPasswordEmail;
     private AwesomeValidation awesomeValidation;
+    private ProgressBar forgotPasswordProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +44,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         forgotPasswordBtn = findViewById(R.id.forgotPasswordBtn);
         forgotPasswordBtn.setBackgroundColor(getResources().getColor(R.color.graycolor));
         forgotPasswordBtn.setEnabled(false);
-
+        forgotPasswordProgressBar = findViewById(R.id.forgotPasswordProgressBar);
+        forgotPasswordProgressBar.setVisibility(View.GONE);
         forgotPasswordEmail = findViewById(R.id.forgotPasswordEmail);
 
         forgotPasswordEmail.addTextChangedListener(new TextWatcher() {
@@ -77,15 +80,18 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         forgotPasswordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                forgotPasswordProgressBar.setVisibility(View.VISIBLE);
                 if(awesomeValidation.validate())
                 {
                     if(InternetCheckHelper.isInternetConnected(ForgotPasswordActivity.this))
                     {
-
+                            new ForgotPasswordSendEmail(ForgotPasswordActivity.this)
+                                    .execute(getString(R.string.urlforgotPasswordSendEmail),forgotPasswordEmail.getText().toString());
                     }
                     else
                     {
                         DialogFragmentHelper.showDialogFragment(ForgotPasswordActivity.this,R.string.dialog_internet_unavailable);
+                        forgotPasswordProgressBar.setVisibility(View.GONE);
                     }
                 }
             }
@@ -94,9 +100,11 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
     public void handleResponse(String response) {
         System.out.println(response);
-        if(response.equals(getString(R.string.success)))
+        if(response.equals(getString(R.string.success_email_sent)))
         {
-            /*todo: send the password reset code to the email, then redirect to new activity to handle it*/
+            Intent intent = new Intent(this,ForgotPasswordEnterForgotCode.class);
+            intent.putExtra(EXTRA_FORGOT_EMAIL,forgotPasswordEmail.getText().toString());
+            startActivity(intent);
         }
         else
         {
@@ -126,7 +134,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
 class ForgotPasswordSendEmail extends AsyncTask<String,Void,String>{
     private WeakReference<ForgotPasswordActivity> forgotPasswordActivityWeakReference;
-    private OkHttpClient client;
+    private OkHttpClient client = new OkHttpClient();
 
     ForgotPasswordSendEmail(ForgotPasswordActivity context)
     {
@@ -136,7 +144,7 @@ class ForgotPasswordSendEmail extends AsyncTask<String,Void,String>{
     protected String doInBackground(String... strings) {
         String url = strings[0];
         String email = strings[1];
-        client = new OkHttpClient();
+
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         String response;
         JSONObject jsonObject = new JSONObject();

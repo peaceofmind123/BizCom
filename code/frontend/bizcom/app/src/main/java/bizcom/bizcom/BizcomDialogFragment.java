@@ -15,28 +15,16 @@ public class BizcomDialogFragment extends DialogFragment {
     private int resourceID;
     private String message;
 
-    public interface InternetUnavailableListener {
-        public void onDialogPositiveClick(DialogFragment dialog);
-    }
 
 
 
 
-    InternetUnavailableListener listener;
+
     @Override
     public void onAttach(Activity activity)
     {
         super.onAttach(activity);
-        try
-        {
-            listener = (InternetUnavailableListener) activity;
 
-        } catch(ClassCastException e)
-        {
-            //the activity doesn't implement the interface, throw exception
-            throw new ClassCastException(activity.toString()+" must Implement InternetUnavailableListener");
-
-        }
     }
     public static BizcomDialogFragment newInstance(int resourceID)
     {
@@ -69,13 +57,7 @@ public class BizcomDialogFragment extends DialogFragment {
         else
             builder.setMessage(this.resourceID);
 
-        builder
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        listener.onDialogPositiveClick(BizcomDialogFragment.this); //redirect the event to the parent
-                    }
-                });
+
         return builder.create();
     }
 }
