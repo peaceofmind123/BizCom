@@ -141,10 +141,16 @@ public class MainActivity extends AppCompatActivity {
 
                 boolean NotNull = isNotNull(Username.getText().toString(), Password.getText().toString());
 
-                final String name, pass;
+                String name, pass = null;
                 name = Username.getText().toString();
-                pass = Password.getText().toString();
-
+                try {
+                    pass =AESCrypt.encrypt(Password.getText().toString());
+                    pass = pass.substring(0,pass.length()-1);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    DialogFragmentHelper.showDialogFragment(MainActivity.this,"Something went wrong, please try again");
+                    recreate();
+                }
 
 
                 if (NotNull) {

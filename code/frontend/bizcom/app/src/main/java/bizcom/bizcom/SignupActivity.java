@@ -76,6 +76,7 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
     ArrayList<String> countries;
     private String userType;
     private String jsonUser;
+    public static final String regexPassword ="(?=.*[a-z])(?=.*[A-Z])(?=.*[\\d])(?=.*[~`!@#\\$%\\^&\\*\\(\\)\\-_\\+=\\{\\}\\[\\]\\|\\;:\"<>,./\\?]).{8,}";
 
 
     public void signUp(View view) throws Exception {
@@ -109,7 +110,7 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
         awesomeValidation.addValidation(SignupActivity.this, R.id.lName, "[a-zA-Z\\s]+", R.string.err_lname);
         awesomeValidation.addValidation(SignupActivity.this, R.id.userName, "[a-zA-Z\\s]+", R.string.err_username);
         awesomeValidation.addValidation(SignupActivity.this, R.id.email, android.util.Patterns.EMAIL_ADDRESS, R.string.err_email);
-        String regexPassword = "(?=.*[a-z])(?=.*[A-Z])(?=.*[\\d])(?=.*[~`!@#\\$%\\^&\\*\\(\\)\\-_\\+=\\{\\}\\[\\]\\|\\;:\"<>,./\\?]).{8,}";
+
         awesomeValidation.addValidation(SignupActivity.this, R.id.password, regexPassword, R.string.err_password);
         awesomeValidation.addValidation(SignupActivity.this, R.id.confirmPassword, R.id.password, R.string.err_confirmpassword);
         awesomeValidation.addValidation(SignupActivity.this, R.id.phone, RegexTemplate.TELEPHONE, R.string.err_phone);

@@ -45,7 +45,7 @@ forgotPasswordBackend.route('/sendForgotCode').post((req,res)=>{
 
 
 });
-/*todo: create forgot password check code route*/
+
 
 forgotPasswordBackend.route('/handleForgotCode').post((req,res)=>{
    if(req.body.forgotPasswordCode === null || req.body.email === null)
@@ -81,6 +81,40 @@ forgotPasswordBackend.route('/handleForgotCode').post((req,res)=>{
                 res.send("server error");
            }
 
+   }
+});
+
+forgotPasswordBackend.route('/updatePassword').post((req,res)=>{
+   if(req.body.password === null || req.body.email === null)
+       res.send("error");
+   else {
+       try {
+           UserModel.findOne({email:req.body.email},(err,user)=>{
+              if(err)
+                  res.send("server error");
+              if(user === null)
+                  res.send("email not found");
+              else {
+                  if(user.passwordChangeRequest) //if the request was sent by the user
+                  {
+                      user.password = req.body.password;
+                      user.passwordChangeRequest = false;
+                      user.save((err)=>{
+                         if(err)
+                             res.send("database error");
+                      });
+                      res.send("success");
+                  }
+                  else {
+                      res.send("invalid request");
+                  }
+              }
+           });
+       }
+       catch(err)
+       {
+           res.send("server error");
+       }
    }
 });
 module.exports = forgotPasswordBackend;
