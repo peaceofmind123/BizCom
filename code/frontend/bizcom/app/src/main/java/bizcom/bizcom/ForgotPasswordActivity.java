@@ -90,12 +90,24 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     }
                     else
                     {
+
                         DialogFragmentHelper.showDialogFragment(ForgotPasswordActivity.this,R.string.dialog_internet_unavailable);
                         forgotPasswordProgressBar.setVisibility(View.GONE);
                     }
                 }
+                else
+                {
+                    forgotPasswordProgressBar.setVisibility(View.GONE);
+                }
             }
         });
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        forgotPasswordProgressBar = findViewById(R.id.forgotPasswordProgressBar);
+        forgotPasswordProgressBar.setVisibility(View.GONE);
     }
 
     public void handleResponse(String response) {
@@ -108,6 +120,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         }
         else
         {
+            forgotPasswordProgressBar.setVisibility(View.GONE);
             HashMap<String, String> resourceMap = mapResources();
             try
             {
@@ -126,8 +139,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         HashMap<String,String> resourceMap = new HashMap<>(4);
         resourceMap.put(getString(R.string.err_general),getString(R.string.err_general_dialogMsg));
         resourceMap.put(getString(R.string.err_server_nonresponsive),getString(R.string.err_server_nonresponsive_dialogMsg));
-        resourceMap.put(getString(R.string.err_general),getString(R.string.err_general_dialogMsg));
-        resourceMap.put(getString(R.string.err_general),getString(R.string.err_general_dialogMsg));
+        resourceMap.put(getString(R.string.err_email_notFound),getString(R.string.err_email_notFound_dialogMsg));
+
         return resourceMap;
     }
 }

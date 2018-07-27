@@ -1,5 +1,6 @@
 package bizcom.bizcom;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import okhttp3.Response;
 
 public class ForgotPasswordEnterForgotCode extends AppCompatActivity {
 
+
     private ProgressBar forgotPassCodeProgressBar;
     private Button resetPasswordBtn;
     private EditText forgotPassCodeEditText;
@@ -48,7 +50,7 @@ public class ForgotPasswordEnterForgotCode extends AppCompatActivity {
         resetPasswordBtn.setBackgroundColor(getResources().getColor(R.color.graycolor));
 
         //validation of code: only 5 or 6 digit code allowed
-        awesomeValidation.addValidation(this,R.id.forgotPassCodeText,"^[0-9]{5,6}$",R.id.err_invalid_code);
+        awesomeValidation.addValidation(this,R.id.forgotPassCodeText,"^[0-9]{5,6}$",R.string.err_invalidPassCode);
 
         //listeners
         forgotPassCodeEditText.addTextChangedListener(new TextWatcher() {
@@ -86,7 +88,9 @@ public class ForgotPasswordEnterForgotCode extends AppCompatActivity {
                     if(InternetCheckHelper.isInternetConnected(ForgotPasswordEnterForgotCode.this))
                     {
                         String email = getIntent().getStringExtra(ForgotPasswordActivity.EXTRA_FORGOT_EMAIL);
-                        new SendForgotCodeTask(ForgotPasswordEnterForgotCode.this).execute(getString(R.string.urlforgotPasswordSendCode),email);
+                        String forgotPassCode = forgotPassCodeEditText.getText().toString();
+                        new SendForgotCodeTask(ForgotPasswordEnterForgotCode.this)
+                                .execute(getString(R.string.urlforgotPasswordHandleForgotCode),email,forgotPassCode);
                     }
 
                     else
@@ -99,10 +103,42 @@ public class ForgotPasswordEnterForgotCode extends AppCompatActivity {
             }
         });
     }
-
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        forgotPassCodeProgressBar = findViewById(R.id.forgotPassCodeProgressBar);
+        forgotPassCodeProgressBar.setVisibility(View.GONE);
+    }
     public void handleResponse(String response) {
         /*todo: handle the response*/
         System.out.println(response);
+        forgotPassCodeProgressBar.setVisibility(View.GONE);
+        if(response.equals(getString(R.string.err_server)))
+        {
+            DialogFragmentHelper.showDialogFragment(this,R.string.dialog_server_error);
+        }
+        else if(response.equals(getString(R.string.err_database)))
+        {
+            DialogFragmentHelper.showDialogFragment(this,R.string.dialog_database_error);
+        }
+        else if(response.equals(getString(R.string.err_general)))
+        {
+            DialogFragmentHelper.showDialogFragment(this,R.string.err_general_dialogMsg);
+        }
+        else if(response.equals(getString(R.string.err_invalidPassCode)))
+        {
+            DialogFragmentHelper.showDialogFragment(this,R.string.err_invalidPassCode_dialogMsg);
+        }
+        else if(response.equals(getString(R.string.success)))
+        {
+            Intent intent = new Intent(this,ForgotPasswordNewPasswordActivity.class);
+            intent.putExtra(ForgotPasswordActivity.EXTRA_FORGOT_EMAIL,getIntent().getStringExtra(ForgotPasswordActivity.EXTRA_FORGOT_EMAIL));
+            startActivity(intent);
+        }
+        else
+        {
+            DialogFragmentHelper.showDialogFragment(this,R.string.err_general_dialogMsg);
+        }
     }
 }
 
@@ -119,12 +155,14 @@ class SendForgotCodeTask extends AsyncTask<String,Void,String>
     protected String doInBackground(String... strings) {
         String url = strings[0];
         String email = strings[1];
+        String forgotPasswordCode = strings[2];
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         String response;
         JSONObject jsonObject = new JSONObject();
         try
         {
             jsonObject.put("email",email);
+            jsonObject.put("forgotPasswordCode",forgotPasswordCode);
             RequestBody body = RequestBody.create(JSON,jsonObject.toString());
             Request request = new Request.Builder()
                     .url(url)

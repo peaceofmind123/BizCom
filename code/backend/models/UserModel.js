@@ -13,8 +13,8 @@ let UserSchema = new Schema({
     userType: String,
     isUserRegistered:{type:Boolean,default:false},
     confirmationCode: String,
-    forgotPasswordCode:String
-
+    forgotPasswordCode:String,
+    passwordChangeRequest:{type:Boolean,default:false}
 
 }, {collection: 'users'});
 

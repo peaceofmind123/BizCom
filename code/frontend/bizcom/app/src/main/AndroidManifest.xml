@@ -24,7 +24,8 @@
         <activity android:name=".ConfirmationActivity" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".ForgotPasswordActivity" />
-        <activity android:name=".ForgotPasswordEnterForgotCode"></activity>
+        <activity android:name=".ForgotPasswordEnterForgotCode" />
+        <activity android:name=".ForgotPasswordNewPasswordActivity"></activity>
     </application>
 
 </manifest>

@@ -5,9 +5,17 @@ const nodeMailer = require('nodemailer');
 
 forgotPasswordBackend.route('/sendForgotCode').post((req,res)=>{
     let forgotPasswordCode = Math.floor((Math.random()*100000)+10000).toString(); //a 5-6 digit random code
+
     UserModel.findOneAndUpdate({email:req.body.email},{$set:{forgotPasswordCode:forgotPasswordCode}},(err,doc)=>{
         if(err)
+            res.send("error");
+        else if(doc===null)
+        {
             res.send("email not found");
+        }
+        else {
+            console.log(doc);
+        }
 
     });
     let transporter = nodeMailer.createTransport({
@@ -39,4 +47,40 @@ forgotPasswordBackend.route('/sendForgotCode').post((req,res)=>{
 });
 /*todo: create forgot password check code route*/
 
+forgotPasswordBackend.route('/handleForgotCode').post((req,res)=>{
+   if(req.body.forgotPasswordCode === null || req.body.email === null)
+       res.send("error");
+   else
+   {
+       try {
+           UserModel.findOne({email:req.body.email},(err,user)=>{
+              if(err)
+                  res.send("email not found");
+              else
+              {
+                  if(user.forgotPasswordCode ===req.body.forgotPasswordCode)
+                  {
+                      user.passwordChangeRequest = true;
+                      user.save((err)=>{
+                          if(err)
+                          {
+                              res.send("database error"); //need to try again if this happens
+                          }
+                      });
+                      res.send("success");
+                  }
+                  else
+                  {
+                      res.send("invalid passCode");
+                  }
+              }
+           });
+       }
+       catch(err)
+           {
+                res.send("server error");
+           }
+
+   }
+});
 module.exports = forgotPasswordBackend;
