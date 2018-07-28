@@ -14,6 +14,7 @@ public class DialogFragmentHelper {
     {
         DialogFragment newFragment = BizcomDialogFragment.newInstance(resourceID);
 
+
         newFragment.show(context.getFragmentManager(),"dialog ".concat(context.getString(resourceID)));
     }
     public static void showDialogFragment(Activity context,String message)

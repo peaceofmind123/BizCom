@@ -50,6 +50,12 @@ public class BizcomDialogFragment extends DialogFragment {
         this.message = args.getString("message",getString(R.string.NullResID));
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
         if(this.resourceID ==R.string.NullResID)
         {
             builder.setMessage(this.message);
@@ -60,4 +66,5 @@ public class BizcomDialogFragment extends DialogFragment {
 
         return builder.create();
     }
+
 }
