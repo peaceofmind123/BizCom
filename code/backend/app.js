@@ -13,6 +13,7 @@ const cookieParser = require('cookie-parser');
 const flash = require('connect-flash');
 const session = require('express-session');
 const passport = require('passport');
+const multer = require('multer');
 //the local strategy is for our own authentication
 const LocalStrategy = require('passport-local').Strategy;
 //this is in accordance with the express-validator 5.* update.. no need of middleware declarations

@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.ProgressCallback;
 import com.koushikdutta.ion.Response;
 
 import org.json.JSONException;
@@ -112,8 +113,14 @@ public class ProfileActivity extends AppCompatActivity {
         File f = new File(path);
 
         Future uploading = Ion.with(ProfileActivity.this)
-                .load(getString(R.string.urlImageUpload))
-                .setMultipartFile("image", f)
+                .load("POST",getString(R.string.urlImageUpload))
+                .uploadProgressHandler(new ProgressCallback() {
+                    @Override
+                    public void onProgress(long uploaded, long total) {
+                        System.out.println(uploaded/total*100);
+                    }
+                })
+                .setMultipartFile("image","image/jpeg", f)
                 .asString()
                 .withResponse()
                 .setCallback(new FutureCallback<Response<String>>() {
@@ -121,7 +128,7 @@ public class ProfileActivity extends AppCompatActivity {
                     public void onCompleted(Exception e, Response<String> result) {
                         try {
                             JSONObject jobj = new JSONObject(result.getResult());
-                            Toast.makeText(getApplicationContext(), jobj.getString("response"), Toast.LENGTH_SHORT).show();
+                            DialogFragmentHelper.showDialogFragment(ProfileActivity.this,jobj.getString("response"));
 
                         } catch (Exception e1) {
                             e1.printStackTrace();
