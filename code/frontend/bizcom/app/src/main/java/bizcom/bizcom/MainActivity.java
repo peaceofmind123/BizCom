@@ -230,11 +230,17 @@ public class MainActivity extends AppCompatActivity {
 
 
                             } catch (JSONException e) {
+                               String userName;
 
+                               try {
+                                   userName = response.getString("userName");
+                               } catch (JSONException e1) {
+                                   e1.printStackTrace();
+                                   userName = "";
+                               }
 
-                                   String user = response.toString();
-                                   Intent intent = new Intent(MainActivity.this,HomeActivity.class);
-                                   intent.putExtra(EXTRA_USER,user);
+                               Intent intent = new Intent(MainActivity.this,ProfileActivity.class);
+                                   intent.putExtra(SignupActivity.EXTRA_USERNAME,userName);
                                    startActivity(intent);
 
 
