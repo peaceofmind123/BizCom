@@ -45,4 +45,5 @@
     <string name="err_email_notFound_dialogMsg">The email you entered is incorrect. Please try again</string>
     <string name="resetPasswordHeading">Please enter the new password to your account</string>
     <string name="urlResetPassword">http://192.168.1.67:8000/userAccounts/forgotPassword/updatePassword</string>
+    <string name="urlImageUpload">http://192.168.1.67:8000/profile/uploadImageTest</string>
 </resources>
