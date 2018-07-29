@@ -1,11 +1,14 @@
 package bizcom.bizcom;
 
+import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.Image;
 import android.database.Cursor;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -26,11 +29,28 @@ import java.util.concurrent.Future;
 public class ProfileActivity extends AppCompatActivity {
     String userName;
     String path;
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
 
     private Button btnUploadImageTest;
     private Button btnSelectImageTest;
     private ImageView imageView;
     private static final int REQUEST_CODE = 100;
+    private void requestPermissions(){
+        int permission1 = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int permission2 = ActivityCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (permission1 != PackageManager.PERMISSION_GRANTED || permission2!=PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    this,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +58,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         //initialization;
         initializeVariables();
+        requestPermissions();
         btnUploadImageTest.setVisibility(View.GONE);
 
         //listeners
@@ -87,6 +108,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void uploadImage() {
+
         File f = new File(path);
 
         Future uploading = Ion.with(ProfileActivity.this)
@@ -101,7 +123,7 @@ public class ProfileActivity extends AppCompatActivity {
                             JSONObject jobj = new JSONObject(result.getResult());
                             Toast.makeText(getApplicationContext(), jobj.getString("response"), Toast.LENGTH_SHORT).show();
 
-                        } catch (JSONException e1) {
+                        } catch (Exception e1) {
                             e1.printStackTrace();
                         }
 
