@@ -13,7 +13,7 @@ forgotPasswordBackend.route('/sendForgotCode').post((req,res)=>{
         {
             res.send("email not found");
         }
-        
+
 
     });
     let transporter = nodeMailer.createTransport({
