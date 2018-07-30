@@ -93,7 +93,7 @@ public class ProfileActivity extends AppCompatActivity {
                 .appendPath("profile")
                 .appendPath("viewImageTest")
                 .appendQueryParameter("image","test.jpg");
-        System.out.println(builder.build().toString());
+
         Ion.with(imageView)
                 .placeholder(R.mipmap.person)
                 .error(R.mipmap.lock)
@@ -135,9 +135,15 @@ public class ProfileActivity extends AppCompatActivity {
     private void uploadImage() {
 
         File f = new File(path);
+    Uri.Builder builder = new Uri.Builder();
+    builder.scheme("http")
+            .encodedAuthority(getString(R.string.urlBase))
+            .appendPath("profile")
+            .appendPath("uploadImageTest");
+    String url = builder.build().toString();
 
         Future uploading = Ion.with(ProfileActivity.this)
-                .load("POST",getString(R.string.urlImageUpload))
+                .load("POST",url).addHeader("userName",userName)
                 .uploadProgressHandler(new ProgressCallback() {
                     @Override
                     public void onProgress(long uploaded, long total) {

@@ -6,7 +6,7 @@ const upload = multer({dest:'./static/photos/'});
 const path = require('path');
 //define profileRouter get, post, put methods here
 profileRouter.post('/uploadImageTest',upload.single('image'),(req,res)=> {
-
+    console.log(req.header('userName'));
     fs.readFile(req.file.path, function (err, data) {
         let dirname =req.file.destination;
         let newPath = dirname + req.file.originalname;
@@ -20,6 +20,7 @@ profileRouter.post('/uploadImageTest',upload.single('image'),(req,res)=> {
     });
 });
 profileRouter.get('/viewImageTest',(req,res)=>{
+
     let file = req.query.image;
     let filePath = path.join(__basedir,'/static/photos',file);
     fs.readFile(filePath,(err,image)=>{
