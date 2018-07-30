@@ -40,6 +40,8 @@ public class ProfileActivity extends AppCompatActivity {
     private Button btnSelectImageTest;
     private ImageView imageView;
     private static final int REQUEST_CODE = 100;
+    private Button btnViewImageTest;
+
     private void requestPermissions(){
         int permission1 = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int permission2 = ActivityCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -75,14 +77,36 @@ public class ProfileActivity extends AppCompatActivity {
                 uploadImage();
             }
         });
-
+        btnViewImageTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewImage();
+            }
+        });
 
     }
+
+    private void viewImage() {
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("http")
+                .encodedAuthority("192.168.1.67:8000")
+                .appendPath("profile")
+                .appendPath("viewImageTest")
+                .appendQueryParameter("image","test.jpg");
+        System.out.println(builder.build().toString());
+        Ion.with(imageView)
+                .placeholder(R.mipmap.person)
+                .error(R.mipmap.lock)
+                .load(builder.build().toString());
+
+    }
+
     private void initializeVariables() {
         userName = getIntent().getStringExtra(SignupActivity.EXTRA_USERNAME);
         btnSelectImageTest = findViewById(R.id.btnSelectImageTest);
         btnUploadImageTest = findViewById(R.id.btnUploadImageTest);
         imageView = findViewById(R.id.imageViewTest);
+        btnViewImageTest = findViewById(R.id.btnViewImageTest);
     }
     private void pickPhoto() {
         Intent fintent = new Intent(Intent.ACTION_PICK);

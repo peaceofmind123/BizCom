@@ -50,7 +50,8 @@ db.on('error', (err)=>{
     debug("couldn't connect to database!!");
 
 });
-
+//basedir setup
+global.__basedir = __dirname;
 //architectural division
 
 //the user accounts subsystem
