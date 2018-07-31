@@ -23,7 +23,7 @@
         <activity android:name=".HomeActivity" />
         <activity android:name=".SignupActivity" />
         <activity android:name=".ConfirmationActivity" />
-        <activity android:name=".ProfileActivity" />
+        <activity android:name=".ProfileActivityTest" />
         <activity android:name=".ForgotPasswordActivity" />
         <activity android:name=".ForgotPasswordEnterForgotCode" />
         <activity android:name=".ForgotPasswordNewPasswordActivity"></activity>

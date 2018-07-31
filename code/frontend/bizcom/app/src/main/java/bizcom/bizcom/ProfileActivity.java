@@ -1,183 +1,163 @@
 package bizcom.bizcom;
 
-import android.Manifest;
-import android.content.ActivityNotFoundException;
-import android.content.CursorLoader;
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.media.Image;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
-import android.support.v4.app.ActivityCompat;
+import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.net.Uri;
-import android.widget.Toast;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.ProgressCallback;
-import com.koushikdutta.ion.Response;
+public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
-import org.json.JSONException;
-import org.json.JSONObject;
+    private ImageView profilePic, companyAdPic;
+    private ImageButton btn_AddUserImage, btn_EditUsername, btn_EditDescription, btn_EditAddInfo, btn_AddCompanyImg, btn_AddNext;
+    private EditText companyName, description;
+    private Button btn_Update;
+    private TextView additionalInfo;
+    private RatingBar ratingBar;
+    private String selectedImagePath;
+    private String userType="user";
 
-import java.io.File;
-import java.util.concurrent.Future;
-public class ProfileActivity extends AppCompatActivity {
-    String userName;
-    String path;
-    private static final int REQUEST_EXTERNAL_STORAGE = 1;
-    private static String[] PERMISSIONS_STORAGE = {
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-    };
-
-    private Button btnUploadImageTest;
-    private Button btnSelectImageTest;
-    private ImageView imageView;
-    private static final int REQUEST_CODE = 100;
-    private Button btnViewImageTest;
-
-    private void requestPermissions(){
-        int permission1 = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        int permission2 = ActivityCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (permission1 != PackageManager.PERMISSION_GRANTED || permission2!=PackageManager.PERMISSION_GRANTED) {
-            // We don't have permission so prompt the user
-            ActivityCompat.requestPermissions(
-                    this,
-                    PERMISSIONS_STORAGE,
-                    REQUEST_EXTERNAL_STORAGE
-            );
-        }
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
-        //initialization;
         initializeVariables();
-        requestPermissions();
-        btnUploadImageTest.setVisibility(View.GONE);
-
-        //listeners
-        btnSelectImageTest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pickPhoto();
-            }
-        });
-        btnUploadImageTest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                uploadImage();
-            }
-        });
-        btnViewImageTest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                viewImage();
-            }
-        });
+        initializeView();
 
     }
 
-    private void viewImage() {
-        Uri.Builder builder = new Uri.Builder();
-        builder.scheme("http")
-                .encodedAuthority("192.168.1.67:8000")
-                .appendPath("profile")
-                .appendPath("viewImageTest")
-                .appendQueryParameter("image","test.jpg");
+    private void initializeView() {
+        //if the usertype is user,nothing can be edited except the rating bar
+        if(userType.equals("general")){
+            btn_AddUserImage.setVisibility(View.GONE);
+            btn_AddCompanyImg.setVisibility(View.GONE);
+            btn_Update.setVisibility(View.GONE);
+            btn_AddNext.setVisibility(View.GONE);
+            companyName.setInputType(InputType.TYPE_NULL);
+            description.setInputType(InputType.TYPE_NULL);
+            additionalInfo.setInputType(InputType.TYPE_NULL);
 
-        Ion.with(imageView)
-                .placeholder(R.mipmap.person)
-                .error(R.mipmap.lock)
-                .load(builder.build().toString());
+        }
+        //if usertype  is not a general user
+        else{
+            ratingBar.setFocusable(false);
+        }
 
+        //if there is no advertising image at the start the image view will be set to gone
+
+        if(companyAdPic.getDrawable()!=null){
+            System.out.println("error");
+        }
+        else{
+            companyAdPic.setVisibility(View.GONE);
+            btn_AddCompanyImg.setVisibility(View.GONE);
+        }
+
+
+        //if user is a companyfirm holder
+        //if(usertype == ..){
+        //
+        // }
     }
 
     private void initializeVariables() {
-        userName = getIntent().getStringExtra(SignupActivity.EXTRA_USERNAME);
-        btnSelectImageTest = findViewById(R.id.btnSelectImageTest);
-        btnUploadImageTest = findViewById(R.id.btnUploadImageTest);
-        imageView = findViewById(R.id.imageViewTest);
-        btnViewImageTest = findViewById(R.id.btnViewImageTest);
+        profilePic = findViewById(R.id.iv_profilePic);
+        companyAdPic = findViewById(R.id.iv_BigImg);
+        btn_AddUserImage = findViewById(R.id.btn_UserImg);
+
+        btn_AddCompanyImg = findViewById(R.id.btn_AddBigImg);
+        btn_AddNext = findViewById(R.id.btn_AddNext);
+        companyName = findViewById(R.id.et_CompanyName);
+        description = findViewById(R.id.et_Description);
+        additionalInfo = findViewById(R.id.et_AdditonalInfo);
+        btn_Update = findViewById((R.id.btn_Update));
+        ratingBar=findViewById(R.id.ratingBar);
     }
-    private void pickPhoto() {
-        Intent fintent = new Intent(Intent.ACTION_PICK);
-        fintent.setType("image/jpeg");
-        try {
-            startActivityForResult(fintent, REQUEST_CODE);
-        } catch (ActivityNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (data == null)
-            return;
-        switch (requestCode) {
-            case 100:
-                if (resultCode == RESULT_OK) {
-                    path = getPathFromURI(data.getData());
-                    imageView.setImageURI(data.getData());
-                    btnUploadImageTest.setVisibility(View.VISIBLE);
+    public void onClick(View view) {
+        switch (view.getId())
+        {
+            case R.id.btn_UserImg:
+                selectImage();
 
-                }
+
+                break;
+
+
+            case R.id.btn_AddBigImg:
+                selectImage();
+
+                break;
+
+            case R.id.btn_AddNext:
+                companyAdPic.setVisibility(View.VISIBLE);
+                btn_AddCompanyImg.setVisibility(View.GONE);
+                break;
+
+
         }
     }
 
-    private void uploadImage() {
+    //selecting image from gallery
 
-        File f = new File(path);
-    Uri.Builder builder = new Uri.Builder();
-    builder.scheme("http")
-            .encodedAuthority(getString(R.string.urlBase))
-            .appendPath("profile")
-            .appendPath("uploadImageTest");
-    String url = builder.build().toString();
+    public void selectImage(){
 
-        Future uploading = Ion.with(ProfileActivity.this)
-                .load("POST",url).addHeader("userName",userName)
-                .uploadProgressHandler(new ProgressCallback() {
-                    @Override
-                    public void onProgress(long uploaded, long total) {
-                        System.out.println(uploaded/total*100);
-                    }
-                })
-                .setMultipartFile("image","image/jpeg", f)
-                .asString()
-                .withResponse()
-                .setCallback(new FutureCallback<Response<String>>() {
-                    @Override
-                    public void onCompleted(Exception e, Response<String> result) {
-                        try {
-                            JSONObject jobj = new JSONObject(result.getResult());
-                            DialogFragmentHelper.showDialogFragment(ProfileActivity.this,jobj.getString("response"));
+        Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        getIntent.setType("image/*");
 
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                        }
+        Intent pickIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        pickIntent.setType("image/*");
 
-                    }
-                });
+        Intent chooserIntent = Intent.createChooser(getIntent, "Select Image");
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent});
+
+        startActivityForResult(chooserIntent, PICK_IMAGE);
+
     }
+    public static final int PICK_IMAGE =1; //this is for comparision with the request code
 
 
+    //getpathmethod
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public String getPath(Uri uri){
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContentResolver().query(uri, projection, null, null);
 
-
-
-    private String getPathFromURI(Uri contentUri) {
-        String[] proj = { MediaStore.Images.Media.DATA };
-        CursorLoader loader = new CursorLoader(getApplicationContext(), contentUri, proj, null, null, null);
-        Cursor cursor = loader.loadInBackground();
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
         return cursor.getString(column_index);
+
+    }
+    @SuppressLint("NewApi")
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        if(requestCode==PICK_IMAGE && resultCode == RESULT_OK && null!=data){
+
+            Uri selectedImageUri = data.getData();
+            selectedImagePath =  getPath(selectedImageUri);
+            System.out.println("Image Path: "+ selectedImagePath);
+            profilePic.setImageURI(selectedImageUri);
+
+        }
+
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
+
+

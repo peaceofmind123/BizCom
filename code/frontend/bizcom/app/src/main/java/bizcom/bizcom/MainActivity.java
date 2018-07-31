@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
                                    userName = "";
                                }
 
-                               Intent intent = new Intent(MainActivity.this,ProfileActivity.class);
+                               Intent intent = new Intent(MainActivity.this,ProfileActivityTest.class);
                                    intent.putExtra(SignupActivity.EXTRA_USERNAME,userName);
                                    startActivity(intent);
 
