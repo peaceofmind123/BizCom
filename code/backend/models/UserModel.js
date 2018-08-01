@@ -16,6 +16,7 @@ let UserSchema = new Schema({
     forgotPasswordCode:String,
     passwordChangeRequest:{type:Boolean,default:false},
     profilePicPath:String,
+    mainAdPicPath:String,
 }, {collection: 'users'});
 
 let UserModel = mongoose.model('UserModel',UserSchema);

@@ -39,6 +39,33 @@ profileRouter.post('/uploadProfilePic',upload.single('image'),(req,res)=>{
     });
 
 });
+profileRouter.post('/uploadAdPic',upload.single('image'),(req,res)=> {
+    let userName = req.header('userName');
+    let dirname = req.file.destination;
+    let newPath = dirname + userName + "mainAdPic.jpg";
+    if (userName === null) {
+        res.json({'response': "error"});
+    }
+    fs.readFile(req.file.path, function (err, data) {
+
+        fs.writeFile(newPath, data, function (err) {
+            if (err) {
+                res.json({'response': "server error"});
+            }
+            else {
+                UserModel.findOneAndUpdate({userName: userName}, {$set: {mainAdPicPath: newPath}}, (err, user) => {
+                    if (err) {
+                        res.json({'response': 'error'});
+                    }
+                    if (user === null) {
+                        res.json({'response': 'username not found'});
+                    }
+                    else res.json({'response': "success"});
+                });
+            }
+        });
+    });
+});
 profileRouter.post('/uploadImageTest',upload.single('image'),(req,res)=> {
     console.log(req.header('userName'));
     fs.readFile(req.file.path, function (err, data) {
