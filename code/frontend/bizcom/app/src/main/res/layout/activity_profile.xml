@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@drawable/blurroad"
+
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".LoginActivity"
     tools:layout_editor_absoluteY="25dp">
 
     <ScrollView
@@ -155,6 +155,7 @@
 
 
                 <RelativeLayout
+                    android:id="@+id/adImageNextLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -163,10 +164,10 @@
                         android:layout_width="270dp"
                         android:layout_height="300dp"
                         android:layout_alignParentTop="true"
-                        android:scaleType="centerCrop"
                         android:layout_centerHorizontal="true"
-                        android:autofillHints="@string/image_hint"
-                        />
+                        android:background="@drawable/emptyimage"
+
+                        android:scaleType="centerCrop" />
 
                     <ImageButton
                         android:id="@+id/btn_AddBigImg"

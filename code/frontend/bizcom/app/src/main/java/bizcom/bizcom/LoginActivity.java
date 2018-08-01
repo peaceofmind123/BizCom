@@ -20,7 +20,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
     public final String EXTRA_USER = "bizcom.bizcom.USER";
     private EditText Username;
     private EditText Password;
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     */
-    //RequestQueue requestQueue= Volley.newRequestQueue(MainActivity.this);
+    //RequestQueue requestQueue= Volley.newRequestQueue(LoginActivity.this);
 
 
     public boolean isNotNull(String user, String pass) {
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         ForgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,ForgotPasswordActivity.class);
+                Intent intent = new Intent(LoginActivity.this,ForgotPasswordActivity.class);
                 startActivity(intent);
             }
         });
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
                     pass = pass.substring(0,pass.length()-1);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    DialogFragmentHelper.showDialogFragment(MainActivity.this,"Something went wrong, please try again");
+                    DialogFragmentHelper.showDialogFragment(LoginActivity.this,"Something went wrong, please try again");
                     recreate();
                 }
 
@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
                                 //if credentials dont match
                                 response.getBoolean("result");
 
-                                    AlertDialog.Builder inCorrectAlert = new AlertDialog.Builder(MainActivity.this);
+                                    AlertDialog.Builder inCorrectAlert = new AlertDialog.Builder(LoginActivity.this);
                                     inCorrectAlert.setMessage("Incorrect username or password");
                                     inCorrectAlert.setTitle("Error");
                                     inCorrectAlert.setCancelable(true);
@@ -230,18 +230,30 @@ public class MainActivity extends AppCompatActivity {
 
 
                             } catch (JSONException e) {
-                               String userName;
+                               try
+                               {
+                                   String userType = response.getString("userType"); //test to see if correct json is sent
+                                   String user;
+                                   user = response.toString();
+                                   if(userType.equals("business"))
+                                   {
+                                       Intent intent = new Intent(LoginActivity.this,ProfileActivity.class);
+                                       intent.putExtra(SignupActivity.EXTRA_USER_JSON,user);
+                                       startActivity(intent);
+                                   }
+                                   else
+                                   {
+                                       Intent intent = new Intent(LoginActivity.this,HomeActivity.class);
+                                       intent.putExtra(SignupActivity.EXTRA_USER_JSON,user);
+                                       startActivity(intent);
+                                   }
 
-                               try {
-                                   userName = response.getString("userName");
-                               } catch (JSONException e1) {
-                                   e1.printStackTrace();
-                                   userName = "";
+                               }
+                               catch(JSONException e1)
+                               {
+                                    DialogFragmentHelper.showDialogFragment(LoginActivity.this,R.string.err_general_dialogMsg);
                                }
 
-                               Intent intent = new Intent(MainActivity.this,ProfileActivityTest.class);
-                                   intent.putExtra(SignupActivity.EXTRA_USERNAME,userName);
-                                   startActivity(intent);
 
 
 
@@ -253,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onErrorResponse(VolleyError error) {
 
-                            Toast.makeText(getApplicationContext(),"please connect to the internet", Toast.LENGTH_SHORT).show();
+                            DialogFragmentHelper.showDialogFragment(LoginActivity.this,getString(R.string.err_general_dialogMsg));
                             error.printStackTrace();
 
 
@@ -261,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
                     });
 
 
-                    MySingleton.getMinstance(MainActivity.this).addToRequestQueue(jsonObjectRequest);
+                    MySingleton.getMinstance(LoginActivity.this).addToRequestQueue(jsonObjectRequest);
 
                  //if null
                 } else {

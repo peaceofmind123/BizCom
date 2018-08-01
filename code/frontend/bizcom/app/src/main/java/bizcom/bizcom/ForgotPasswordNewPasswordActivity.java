@@ -122,7 +122,7 @@ public class ForgotPasswordNewPasswordActivity extends AppCompatActivity {
         mapResponses.put(getString(R.string.err_database),getString(R.string.dialog_database_error));
         if(response.equals("success"))
         {
-            Intent intent = new Intent(this,MainActivity.class);
+            Intent intent = new Intent(this,LoginActivity.class);
             startActivity(intent);
         }
         else

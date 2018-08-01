@@ -170,7 +170,7 @@ public class ConfirmationActivity extends AppCompatActivity{
     }
 
     private void startProfileActivity() {
-        Intent intent = new Intent(ConfirmationActivity.this, ProfileActivityTest.class);
+        Intent intent = new Intent(ConfirmationActivity.this, ProfileActivity.class);
         intent.putExtra(SignupActivity.EXTRA_USER_JSON,jsonStringUser);
         startActivity(intent);
     }

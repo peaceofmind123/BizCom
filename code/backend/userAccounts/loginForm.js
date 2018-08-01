@@ -13,14 +13,14 @@ loginForm.route('/').post((req,res)=>{
             //if password matches
             if ((req.body.password)===(model.password)){
                 res.json(model);
-                console.log(model);
+                
             }
 
             //if password doesnt match
             else{
                 //res.send(400,{"result":false});
                 //res.status(400).send({"result":false});
-                res.send({"result":true}); //to make the if condition in android studio work
+                res.send({"result":false}); //to make the if condition in android studio work
 
             }
 
@@ -30,7 +30,7 @@ loginForm.route('/').post((req,res)=>{
 
             //res.send(400,{"result":false});
             //res.status(400).send({"result":false});
-            res.json({"result":true});
+            res.json({"result":false});
 
         }
     });

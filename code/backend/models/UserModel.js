@@ -14,8 +14,8 @@ let UserSchema = new Schema({
     isUserRegistered:{type:Boolean,default:false},
     confirmationCode: String,
     forgotPasswordCode:String,
-    passwordChangeRequest:{type:Boolean,default:false}
-
+    passwordChangeRequest:{type:Boolean,default:false},
+    profilePicPath:String,
 }, {collection: 'users'});
 
 let UserModel = mongoose.model('UserModel',UserSchema);
