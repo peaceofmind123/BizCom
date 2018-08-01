@@ -17,6 +17,7 @@ let UserSchema = new Schema({
     passwordChangeRequest:{type:Boolean,default:false},
     profilePicPath:String,
     mainAdPicPath:String,
+    isLoggedIn: {type:Boolean, default:false},
 }, {collection: 'users'});
 
 let UserModel = mongoose.model('UserModel',UserSchema);

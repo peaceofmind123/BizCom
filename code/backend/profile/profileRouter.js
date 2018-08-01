@@ -22,6 +22,7 @@ profileRouter.post('/uploadProfilePic',upload.single('image'),(req,res)=>{
             }
             else
             {
+
                 UserModel.findOneAndUpdate({userName:userName},{$set:{profilePicPath:newPath}},(err,user)=>{
                     if(err)
                     {
@@ -78,6 +79,42 @@ profileRouter.post('/uploadImageTest',upload.single('image'),(req,res)=> {
                 res.json({'response': "Saved"});
             }
         });
+    });
+});
+profileRouter.get('/getProfilePic',(req,res)=>{
+   let userName = req.query.userName;
+   let file = userName+"profilePic.jpg";
+   let filePath = path.join(__basedir,'/static/photos/',file);
+    fs.readFile(filePath,(err,image)=>{
+        if(err)
+        {
+            console.log(err);
+            res.json({'response':'error'});
+        }
+        else
+        {
+            res.writeHead(200,{'Content-Type':'image/jpg'});
+            res.end(image,'binary');
+        }
+
+    });
+});
+profileRouter.get('/getMainAdPic',(req,res)=>{
+    let userName = req.query.userName;
+    let file = userName+"mainAdPic.jpg";
+    let filePath = path.join(__basedir,'/static/photos/',file);
+    fs.readFile(filePath,(err,image)=>{
+        if(err)
+        {
+            console.log(err);
+            res.json({'response':'error'});
+        }
+        else
+        {
+            res.writeHead(200,{'Content-Type':'image/jpg'});
+            res.end(image,'binary');
+        }
+
     });
 });
 profileRouter.get('/viewImageTest',(req,res)=>{

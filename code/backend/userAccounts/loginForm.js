@@ -12,7 +12,17 @@ loginForm.route('/').post((req,res)=>{
 
             //if password matches
             if ((req.body.password)===(model.password)){
-                res.json(model);
+                model.isLoggedIn=true;
+                model.save((err)=>{
+                    if(err)
+                    {
+                        res.json({'result':false});
+                    }
+                    else {
+                        res.json(model);
+                    }
+                });
+
                 
             }
 

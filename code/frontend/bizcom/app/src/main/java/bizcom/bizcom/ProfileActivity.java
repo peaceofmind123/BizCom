@@ -77,6 +77,10 @@ public class ProfileActivity extends AppCompatActivity {
 
 
     private void initializeView() {
+
+        downloadProfilePic();
+        downloadMainAdPic();
+
         //if the usertype is user,nothing can be edited except the rating bar
 
         if(userType.equals("general")){
@@ -107,6 +111,26 @@ public class ProfileActivity extends AppCompatActivity {
         //if(usertype == ..){
         //
         // }
+    }
+
+    private void downloadMainAdPic() {
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("http")
+                .encodedAuthority("192.168.1.67:8000")
+                .appendPath("profile")
+                .appendPath("getMainAdPic")
+                .appendQueryParameter("userName",userName);
+        ImageNetworkHelper.downloadImage(this,builder.build().toString(),R.id.iv_BigImg,R.drawable.emptyimage,R.drawable.emptyimage);
+    }
+
+    private void downloadProfilePic() {
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("http")
+                .encodedAuthority("192.168.1.67:8000")
+                .appendPath("profile")
+                .appendPath("getProfilePic")
+                .appendQueryParameter("userName",userName);
+        ImageNetworkHelper.downloadImage(this,builder.build().toString(),R.id.iv_profilePic,R.drawable.emptyimage,R.drawable.emptyimage);
     }
 
     private void initializeVariables() {
