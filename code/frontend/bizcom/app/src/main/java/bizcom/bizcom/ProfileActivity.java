@@ -24,6 +24,7 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +49,7 @@ public class ProfileActivity extends AppCompatActivity {
         ImageNetworkHelper.requestPermissions(this);
         setContentView(R.layout.activity_profile);
         initializeVariables();
+        clearCache();
         initializeView();
         btn_AddUserImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,8 +76,30 @@ public class ProfileActivity extends AppCompatActivity {
 
 
 
-
-
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+            return dir.delete();
+        } else if(dir!= null && dir.isFile()) {
+            return dir.delete();
+        } else {
+            return false;
+        }
+    }
+    private void clearCache(){
+        try {
+            File dir = this.getCacheDir();
+            deleteDir(dir);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     private void initializeView() {
 
         downloadProfilePic();

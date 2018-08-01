@@ -12,60 +12,110 @@ profileRouter.post('/uploadProfilePic',upload.single('image'),(req,res)=>{
     let newPath = dirname + userName+"profilePic.jpg";
     if(userName ===null)
     {
+        console.log('error');
         res.json({'response':"error"});
     }
-    fs.readFile(req.file.path, function (err, data) {
+    UserModel.findOne({userName:userName},(err,user)=>{
+       if(err)
+       {
+           console.log('database error');
+           res.json({'response':'error'});
+       }
+       if(user===null)
+        {
+            console.log('username not found');
+            res.json({'response':'username not found'});
+        }
+        else
+       {
+           if(user.isLoggedIn)
+           {
+               fs.readFile(req.file.path, function (err, data) {
 
-        fs.writeFile(newPath, data, function (err) {
-            if (err) {
-                res.json({'response': "server error"});
-            }
-            else
-            {
+                   fs.writeFile(newPath, data, function (err) {
+                       if (err) {
+                           console.log('can\'t write to fs');
+                           res.json({'response': "server error"});
+                       }
+                       else
+                       {
+                           user.save((err)=>{
+                               if(err)
+                               {
+                                   console.log('couldn\'t save user');
+                                   res.json({'response':'database error'});
+                               }
 
-                UserModel.findOneAndUpdate({userName:userName},{$set:{profilePicPath:newPath}},(err,user)=>{
-                    if(err)
-                    {
-                        res.json({'response':'error'});
-                    }
-                    if(user===null)
-                    {
-                        res.json({'response':'username not found'});
-                    }
-                    else res.json({'response': "success"});
-                });
+                               else
+                               {
+                                   console.log('success');
+                                   res.json({'response':'success'});
+                               }
 
-            }
-        });
+                           });
+                       }
+                   });
+               });
+           }
+           else {
+               console.log('not logged in');
+               res.json({'response':'not logged in'});
+           }
+       }
     });
+
 
 });
-profileRouter.post('/uploadAdPic',upload.single('image'),(req,res)=> {
+profileRouter.post('/uploadAdPic',upload.single('image'),(req,res)=>{
     let userName = req.header('userName');
-    let dirname = req.file.destination;
-    let newPath = dirname + userName + "mainAdPic.jpg";
-    if (userName === null) {
-        res.json({'response': "error"});
+    let dirname =req.file.destination;
+    let newPath = dirname + userName+"mainAdPic.jpg";
+    if(userName ===null)
+    {
+        res.json({'response':"error"});
     }
-    fs.readFile(req.file.path, function (err, data) {
+    UserModel.findOne({userName:userName},(err,user)=>{
+        if(err)
+        {
+            res.json({'response':'error'});
+        }
+        if(user===null)
+        {
+            res.json({'response':'username not found'});
+        }
+        else
+        {
+            if(user.isLoggedIn)
+            {
+                user.mainAdPicPath = newPath;
 
-        fs.writeFile(newPath, data, function (err) {
-            if (err) {
-                res.json({'response': "server error"});
-            }
-            else {
-                UserModel.findOneAndUpdate({userName: userName}, {$set: {mainAdPicPath: newPath}}, (err, user) => {
-                    if (err) {
-                        res.json({'response': 'error'});
-                    }
-                    if (user === null) {
-                        res.json({'response': 'username not found'});
-                    }
-                    else res.json({'response': "success"});
+                fs.readFile(req.file.path, function (err, data) {
+
+                    fs.writeFile(newPath, data, function (err) {
+                        if (err) {
+                            res.json({'response': "server error"});
+                        }
+                        else
+                        {
+                            user.save((err)=>{
+                                if(err)
+                                    res.json({'response':'database error'});
+                                else
+                                    res.json({'response':'success'});
+                            });
+
+
+                        }
+                    });
                 });
             }
-        });
+            else {
+                res.json({'response':'not logged in'});
+            }
+        }
     });
+
+
 });
 profileRouter.post('/uploadImageTest',upload.single('image'),(req,res)=> {
     console.log(req.header('userName'));
@@ -85,6 +135,7 @@ profileRouter.get('/getProfilePic',(req,res)=>{
    let userName = req.query.userName;
    let file = userName+"profilePic.jpg";
    let filePath = path.join(__basedir,'/static/photos/',file);
+   console.log(filePath);
     fs.readFile(filePath,(err,image)=>{
         if(err)
         {

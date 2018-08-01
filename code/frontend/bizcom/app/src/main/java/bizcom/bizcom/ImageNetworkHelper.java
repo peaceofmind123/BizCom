@@ -28,13 +28,16 @@ public class ImageNetworkHelper {
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CLEAR_APP_CACHE
     };
     public static boolean requestPermissions(Activity context)
     {
         int permission1 = ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int permission2 = ActivityCompat.checkSelfPermission(context,Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (permission1 != PackageManager.PERMISSION_GRANTED || permission2!=PackageManager.PERMISSION_GRANTED) {
+        int permission3 = ActivityCompat.checkSelfPermission(context,Manifest.permission.CLEAR_APP_CACHE);
+        if (permission1 != PackageManager.PERMISSION_GRANTED || permission2!=PackageManager.PERMISSION_GRANTED
+                || permission3!=PackageManager.PERMISSION_GRANTED) {
             // We don't have permission so prompt the user
             ActivityCompat.requestPermissions(
                     context,
@@ -80,6 +83,7 @@ public class ImageNetworkHelper {
     }
     public static void downloadImage(Activity context,String url,int ImageViewResourceID,int placeHolderResourceID,int errorResourceID)
     {
+        System.out.println(url);
         ImageView imageView = context.findViewById(ImageViewResourceID);
         Ion.with(imageView)
                 .placeholder(placeHolderResourceID)
