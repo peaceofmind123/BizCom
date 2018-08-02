@@ -4,11 +4,16 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.widget.ImageView;
 
+import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
@@ -18,7 +23,10 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by Satan on 8/1/2018.
@@ -51,7 +59,44 @@ public class ImageNetworkHelper {
     }
 
 
+    public static void getProfilePhoto(Activity context,String userName,int imageViewResID)
+    {
+        Uri.Builder builder = new Uri.Builder();
 
+
+            builder.scheme("http")
+                    .encodedAuthority(context.getString(R.string.urlBase))
+                    .appendPath("profile")
+                    .appendPath("getProfilePic")
+                    .appendQueryParameter("userName",userName);
+
+
+
+
+        ImageNetworkHelper.downloadImage(context,builder.build().toString(),imageViewResID,R.drawable.emptyimage,R.drawable.emptyimage);
+    }
+    public static void selectImage(Activity context,int request){
+
+        Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        getIntent.setType("image/*");
+
+        Intent pickIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        pickIntent.setType("image/*");
+
+        Intent chooserIntent = Intent.createChooser(getIntent, "Select Image");
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent});
+
+        context.startActivityForResult(chooserIntent, request);
+
+    }
+    public static String getPathFromURI(Activity context,Uri contentUri) {
+        String[] proj = { MediaStore.Images.Media.DATA };
+        CursorLoader loader = new CursorLoader(context.getApplicationContext(), contentUri, proj, null, null, null);
+        Cursor cursor = loader.loadInBackground();
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
+    }
     public static void uploadImage(Activity context,String path,String url,String headerName,String headerValue)
     {
         File f = new File(path);
@@ -90,4 +135,8 @@ public class ImageNetworkHelper {
                 .error(errorResourceID)
                 .load(url);
     }
+
+
+
+
 }

@@ -140,7 +140,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void downloadMainAdPic() {
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("http")
-                .encodedAuthority("192.168.1.67:8000")
+                .encodedAuthority(getString(R.string.urlBase))
                 .appendPath("profile")
                 .appendPath("getMainAdPic")
                 .appendQueryParameter("userName",userName);

@@ -48,4 +48,5 @@
     <string name="urlImageUpload">http://192.168.1.67:8000/profile/uploadImageTest</string>
     <string name="urlViewImageTest">http://192.168.1.67:8000/profile/viewImageTest/</string>
     <string name="urlBase">192.168.1.67:8000</string>
+    <string name="forgotPasswordEnterNewPasswordHeading">Enter the new password to continue</string>
 </resources>

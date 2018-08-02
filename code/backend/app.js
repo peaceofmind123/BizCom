@@ -66,11 +66,15 @@ const recRouter = require('./recommendation/recRouter');
 //the search subsystem
 const searchRouter = require('./search/searchRouter');
 
+//the home subsystem
+const homeRouter = require('./home/homeRouter');
+
 //subsystems use declarations
 app.use('/userAccounts',uaRouter);
 app.use('/profile',profileRouter);
 app.use('/search', searchRouter);
 app.use('/recommendation',recRouter);
+app.use('/home',homeRouter);
 //the api starting point
 app.get('/',(req,res)=>{
     debug('get request recieved');

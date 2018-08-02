@@ -66,6 +66,7 @@ profileRouter.post('/uploadProfilePic',upload.single('image'),(req,res)=>{
 
 
 });
+
 profileRouter.post('/uploadAdPic',upload.single('image'),(req,res)=>{
     let userName = req.header('userName');
     let dirname =req.file.destination;
