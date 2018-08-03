@@ -49,7 +49,13 @@ confirmationBackend.route('/confirm').post((req,res)=>{
 
            if(user.confirmationCode ===(req.body.confirmationCode))
            {
-
+               user.isLoggedIn=true;
+               user.save((err)=>{
+                  if(err)
+                  {
+                      res.send("server error");
+                  }
+               });
                res.send("success");
            }
            else {

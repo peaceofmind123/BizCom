@@ -4,28 +4,27 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.text.InputType;
 import android.text.TextUtils;
-import android.text.method.PasswordTransformationMethod;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.Response;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class HomeActivity extends AppCompatActivity {
     private ImageView profilePic, ad1,ad2,ad3,recAd1,recAd2,recAd3;
-    private EditText search;
+    private EditText searchEditText;
     private TextView hotspot, sponsored, recommendation,company1, company2,company3,recCompany1,recCompany2, recCompany3;
     private ImageButton btn_Search;
     private JSONObject user;
@@ -53,6 +52,59 @@ public class HomeActivity extends AppCompatActivity {
                 addProfilePic();
             }
         });
+        btn_Search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                search();
+            }
+        });
+    }
+
+    private void search() {
+        String searchText = searchEditText.getText().toString();
+        if(TextUtils.isEmpty(searchText))
+            searchEditText.setError("Empty");
+        else
+        {
+            Uri.Builder builder = new Uri.Builder();
+            builder.scheme("http")
+                    .encodedAuthority(this.getString(R.string.urlBase))
+                    .appendPath("search")
+                    .appendQueryParameter("query",searchText);
+
+            Ion.with(this)
+                    .load(builder.build().toString())
+                    .asJsonArray()
+                    .withResponse()
+                    .setCallback(new FutureCallback<Response<JsonArray>>() {
+                        @Override
+                        public void onCompleted(Exception e, Response<JsonArray> result) {
+                            if(e!=null)
+                            {
+                                DialogFragmentHelper.showDialogFragment(HomeActivity.this,R.string.err_server_dialogMsg);
+                            }
+                            else
+                            {
+                                for(int i =0;i<result.getResult().size();i++)
+                                {
+                                    System.out.println(result.getResult().get(i).toString());
+                                }
+                            }
+                        }
+                    });
+        }
+    }
+
+    private void handleSearchResult(Response<JsonObject> companyNames) {
+        int i=0;
+
+        while(companyNames.getResult().get(Integer.toString(i))!=null)
+        {
+            String companyName = companyNames.getResult().get(Integer.toString(i)).toString();
+            System.out.println(companyName);
+            i++;
+
+        }
     }
 
     private void addProfilePic() {
@@ -124,9 +176,13 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 });
     }
+
+
     private String cleanCompanyName(String companyName)
     {
-        return companyName.substring(1,companyName.length()-1);
+        if(!companyName.equals("null"))
+        return companyName.substring(1,companyName.length()-1).toUpperCase();
+        else throw new NullPointerException("Empty String Recieved");
     }
     private void handleCompanyNames(JsonObject companies) {
         if(companies.get("response")==null)
@@ -171,7 +227,7 @@ public class HomeActivity extends AppCompatActivity {
                 recCompany1Name = companies.get("recCompany1").toString();
                 recCompany1Name = cleanCompanyName(recCompany1Name);
                 recCompany1.setText(recCompany1Name);
-                ImageNetworkHelper.getProfilePhoto(this,recCompany1Name,R.id.iv_RecAd3);
+                ImageNetworkHelper.getProfilePhoto(this,recCompany1Name,R.id.iv_RecAd1);
             }
             catch(NullPointerException e)
             {
@@ -182,7 +238,7 @@ public class HomeActivity extends AppCompatActivity {
                 recCompany2Name = companies.get("recCompany2").toString();
                 recCompany2Name = cleanCompanyName(recCompany2Name);
                 recCompany2.setText(recCompany2Name);
-                ImageNetworkHelper.getProfilePhoto(this,recCompany2Name,R.id.iv_RecAd3);
+                ImageNetworkHelper.getProfilePhoto(this,recCompany2Name,R.id.iv_RecAd2);
             }
             catch(NullPointerException e)
             {
@@ -229,7 +285,7 @@ public class HomeActivity extends AppCompatActivity {
         recAd1 = findViewById(R.id.iv_RecAd1);
         recAd2 = findViewById(R.id.iv_RecAd2);
         recAd3 = findViewById(R.id.iv_RecAd3);
-        search = findViewById(R.id.et_Search);
+        searchEditText = findViewById(R.id.et_Search);
 
         hotspot = findViewById((R.id.tv_Hotspot));
         sponsored = findViewById(R.id.tv_Sponsored);

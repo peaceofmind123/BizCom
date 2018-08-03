@@ -226,8 +226,7 @@
                             <TextView
                                 android:id="@+id/tv_Company1"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Adidas" />
+                                android:layout_height="wrap_content" />
 
 
                         </LinearLayout>
@@ -264,8 +263,7 @@
                             <TextView
                                 android:id="@+id/tv_Company2"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Ncell" />
+                                android:layout_height="wrap_content" />
 
                         </LinearLayout>
 
@@ -299,8 +297,7 @@
                             <TextView
                                 android:id="@+id/tv_Company3"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="BMW" />
+                                android:layout_height="wrap_content" />
 
 
                         </LinearLayout>
@@ -382,8 +379,7 @@
                             <TextView
                                 android:id="@+id/tv_RecCompany1"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="LinkedIn" />
+                                android:layout_height="wrap_content" />
 
                         </LinearLayout>
 
@@ -418,8 +414,7 @@
                             <TextView
                                 android:id="@+id/tv_RecCompany2"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="LEVI'S" />
+                                android:layout_height="wrap_content" />
 
 
                         </LinearLayout>
@@ -456,8 +451,7 @@
                             <TextView
                                 android:id="@+id/tv_RecCompany3"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="EASTMAN" />
+                                android:layout_height="wrap_content" />
 
                         </LinearLayout>
 

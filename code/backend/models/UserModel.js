@@ -18,8 +18,17 @@ let UserSchema = new Schema({
     profilePicPath:String,
     mainAdPicPath:String,
     isLoggedIn: {type:Boolean, default:false},
+    score:Number
 }, {collection: 'users'});
+UserSchema.index(
+    {
+        fName:'text',
+        lName:'text',
+        userName:'text',
+        city:'text',
+        country:'text',
 
+    });
 let UserModel = mongoose.model('UserModel',UserSchema);
 
 module.exports = UserModel;
