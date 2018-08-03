@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/bgcolor"
     android:padding="2dp"
-    tools:context=".HomeActivity"
+    tools:context=".MainActivity"
 
     tools:layout_editor_absoluteY="25dp">
 
@@ -25,10 +25,10 @@
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.7"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.2">
+        app:layout_constraintVertical_bias="0.0">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -44,8 +44,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginStart="8dp"
+                android:layout_marginLeft="28dp"
+                android:layout_marginStart="28dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/textcornerbg"
                 android:ems="10"
@@ -54,8 +54,7 @@
                 android:padding="4dp"
                 app:layout_constraintBottom_toTopOf="@+id/view3"
                 app:layout_constraintStart_toEndOf="@+id/cardView2"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.55" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
                 android:id="@+id/btn_Search"
@@ -81,12 +80,12 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="132dp"
+                android:layout_marginTop="33dp"
                 android:text="sponsored"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.38"
+                app:layout_constraintHorizontal_bias="0.309"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/searchScrollView" />
 
             <!--<SearchView-->
             <!--android:layout_width="254dp"-->
@@ -112,20 +111,21 @@
                 android:id="@+id/cardView2"
                 android:layout_width="82dp"
                 android:layout_height="79dp"
-                android:layout_marginBottom="8dp"
 
-                android:layout_marginEnd="276dp"
-                android:layout_marginRight="276dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="16dp"
                 android:clipToPadding="false"
                 android:padding="8dp"
-                app:layout_constraintBottom_toTopOf="@+id/tv_Hotspot"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.244">
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
 
-                <LinearLayout
+                <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
@@ -135,13 +135,28 @@
                         android:id="@+id/iv_ProfilePic"
                         android:layout_width="75dp"
                         android:layout_height="75dp"
+                        android:layout_marginEnd="7dp"
                         android:background="@drawable/squarebackground"
                         android:padding="14dp"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/man" />
+                        android:src="@drawable/man"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-
-                </LinearLayout>
+                    <ImageButton
+                        android:id="@+id/btnAddProfilePic"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginStart="64dp"
+                        android:layout_marginTop="52dp"
+                        android:background="@drawable/searchcorner"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/addphoto2" />
+                </android.support.constraint.ConstraintLayout>
 
 
             </android.support.v7.widget.CardView>
@@ -161,27 +176,188 @@
                 app:layout_constraintTop_toTopOf="parent"></View>
 
 
+            <TextView
+                android:id="@+id/tv_SearchResults"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="210dp"
 
+
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="210dp"
+                android:layout_marginStart="16dp"
+
+
+                android:layout_marginTop="8dp"
+                android:fontFamily="sans-serif-condensed"
+                android:text="Search Results"
+                android:textSize="28dp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+
+                app:layout_constraintTop_toBottomOf="@+id/view3"
+
+
+                android:visibility="gone"/>
+
+
+            <HorizontalScrollView
+                android:id="@+id/searchScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="20dp"
+                android:padding="3dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+
+                app:layout_constraintTop_toBottomOf="@+id/tv_SearchResults">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/searchCardView1"
+                        android:layout_width="130dp"
+                        android:visibility="gone"
+                        android:layout_height="130dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/iv_SearchResult1"
+                                android:layout_width="95dp"
+                                android:layout_height="95dp"
+                                android:background="@drawable/squarebackground"
+                                android:padding="10dp"
+                                android:scaleType="fitCenter" />
+
+                            <TextView
+                                android:id="@+id/tv_SearchResult1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+                        </LinearLayout>
+
+
+                    </android.support.v7.widget.CardView>
+
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="6dp">
+
+                    </View>
+
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/searchCardView2"
+                        android:visibility="gone"
+                        android:layout_width="130dp"
+                        android:layout_height="130dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/iv_SearchResult2"
+                                android:layout_width="95dp"
+                                android:layout_height="95dp"
+                                android:background="@drawable/squarebackground"
+                                android:padding="10dp"
+                                android:scaleType="fitCenter" />
+
+                            <TextView
+                                android:id="@+id/tv_SearchResult2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+
+                        </LinearLayout>
+
+
+                    </android.support.v7.widget.CardView>
+
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="6dp">
+
+                    </View>
+
+                    <android.support.v7.widget.CardView
+                        android:id="@+id/searchCardView3"
+                        android:visibility="gone"
+                        android:layout_width="130dp"
+                        android:layout_height="130dp">
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/iv_SearchResult3"
+                                android:layout_width="95dp"
+                                android:layout_height="95dp"
+                                android:background="@drawable/squarebackground"
+                                android:padding="10dp"
+                                android:scaleType="fitCenter" />
+
+                            <TextView
+                                android:id="@+id/tv_SearchResult3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+                        </LinearLayout>
+
+
+                    </android.support.v7.widget.CardView>
+
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="6dp">
+
+                    </View>
+
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
 
             <TextView
                 android:id="@+id/tv_Hotspot"
                 android:layout_width="wrap_content"
-                android:layout_height="32dp"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="12dp"
                 android:fontFamily="sans-serif-condensed"
+
+
                 android:text="Hotspot"
-
-
                 android:textSize="28dp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.103"
+                app:layout_constraintHorizontal_bias="0.027"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/view3" />
+                app:layout_constraintTop_toBottomOf="@+id/searchScrollView" />
 
             <HorizontalScrollView
                 android:id="@+id/scrollView2"
@@ -191,17 +367,17 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="58dp"
+                android:layout_marginTop="8dp"
                 android:padding="3dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view3">
+                app:layout_constraintTop_toBottomOf="@+id/tv_Sponsored">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
                     <android.support.v7.widget.CardView
                         android:layout_width="130dp"
@@ -226,7 +402,8 @@
                             <TextView
                                 android:id="@+id/tv_Company1"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:text="Adidas" />
 
 
                         </LinearLayout>
@@ -263,7 +440,8 @@
                             <TextView
                                 android:id="@+id/tv_Company2"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:text="Ncell" />
 
                         </LinearLayout>
 
@@ -297,7 +475,8 @@
                             <TextView
                                 android:id="@+id/tv_Company3"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:text="BMW" />
 
 
                         </LinearLayout>
@@ -319,23 +498,23 @@
             <TextView
                 android:id="@+id/tv_Recommend"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="148dp"
+                android:layout_marginTop="15dp"
+
                 android:fontFamily="sans-serif-condensed"
                 android:text="Recommendation"
 
+
                 android:textSize="28dp"
                 android:textStyle="bold"
-
-
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.157"
+                app:layout_constraintHorizontal_bias="0.043"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/scrollView2" />
+                app:layout_constraintTop_toBottomOf="@+id/scrollView2" />
 
 
             <HorizontalScrollView
@@ -345,17 +524,18 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="262dp"
+                android:layout_marginTop="14dp"
                 android:padding="3dp"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view3">
+                app:layout_constraintTop_toBottomOf="@+id/tv_Recommend">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
                     <android.support.v7.widget.CardView
                         android:layout_width="130dp"
@@ -379,7 +559,8 @@
                             <TextView
                                 android:id="@+id/tv_RecCompany1"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:text="LinkedIn" />
 
                         </LinearLayout>
 
@@ -414,7 +595,8 @@
                             <TextView
                                 android:id="@+id/tv_RecCompany2"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:text="LEVI'S" />
 
 
                         </LinearLayout>
@@ -451,7 +633,8 @@
                             <TextView
                                 android:id="@+id/tv_RecCompany3"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:text="EASTMAN" />
 
                         </LinearLayout>
 
@@ -468,19 +651,6 @@
                 </LinearLayout>
 
             </HorizontalScrollView>
-
-            <ImageButton
-                android:id="@+id/btnAddProfilePic"
-                android:layout_width="30dp"
-                android:layout_height="33dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="72dp"
-                app:layout_constraintEnd_toEndOf="@+id/view3"
-                app:layout_constraintHorizontal_bias="0.325"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/addphoto" />
 
 
         </android.support.constraint.ConstraintLayout>

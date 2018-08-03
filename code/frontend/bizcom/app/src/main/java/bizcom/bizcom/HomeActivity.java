@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -37,6 +39,18 @@ public class HomeActivity extends AppCompatActivity {
     private String recCompany1Name;
     private String recCompany2Name;
     private String recCompany3Name;
+    private ImageView searchResult1IV;
+    private ImageView searchResult2IV;
+    private ImageView searchResult3IV;
+    private TextView searchResultsText;
+    private HorizontalScrollView searchScrollView;
+    private TextView searchResult1TV;
+    private TextView searchResult2TV;
+    private TextView searchResult3TV;
+    private ArrayList<String> searchResultsCompanyName;
+    private CardView searchCardView1;
+    private CardView searchCardView2;
+    private CardView searchCardView3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +103,7 @@ public class HomeActivity extends AppCompatActivity {
                                 {
                                     for(int i =0;i<result.getResult().size();i++)
                                     {
-                                        System.out.println(result.getResult().get(i).toString());
+                                        handleSearchResult(result);
                                     }
                                 }
                                 catch(NullPointerException e1)
@@ -102,17 +116,45 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    private void handleSearchResult(Response<JsonObject> companyNames) {
-        int i=0;
+    private void handleSearchResult(Response<JsonArray> companyNames) {
 
-        while(companyNames.getResult().get(Integer.toString(i))!=null)
+        searchResultsCompanyName = new ArrayList<>();
+        if(!(companyNames.getResult().isJsonNull()))
         {
-            String companyName = companyNames.getResult().get(Integer.toString(i)).toString();
-            System.out.println(cleanCompanyName(companyName));
-            i++;
+            for(int i=0;i<companyNames.getResult().size();i++)
+            {
+                searchResultsCompanyName.add(cleanCompanyName(companyNames.getResult().get(i).toString()));
+            }
+        }
+        if(searchResultsCompanyName.size()>0)
+        {
+            searchResultsText.setVisibility(View.VISIBLE);
+            searchScrollView.setVisibility(View.VISIBLE);
+            searchCardView1.setVisibility(View.VISIBLE);
+            searchResult1TV.setText(searchResultsCompanyName.get(0));
+            ImageNetworkHelper.getProfilePhoto(this,searchResultsCompanyName.get(0),R.id.iv_SearchResult1);
 
         }
+        if(searchResultsCompanyName.size()>1)
+        {
+            searchCardView2.setVisibility(View.VISIBLE);
+            searchResult2TV.setText(searchResultsCompanyName.get(1));
+            ImageNetworkHelper.getProfilePhoto(this,searchResultsCompanyName.get(1),R.id.iv_SearchResult2);
+        }
+        if(searchResultsCompanyName.size()>2)
+        {
+            searchResult3TV.setText(searchResultsCompanyName.get(2));
+            searchCardView3.setVisibility(View.VISIBLE);
+            ImageNetworkHelper.getProfilePhoto(this,searchResultsCompanyName.get(2),R.id.iv_SearchResult3);
+
+        }
+
+
+
+
+
     }
+
 
     private void addProfilePic() {
         ImageNetworkHelper.selectImage(this,PICK_IMAGE);
@@ -282,6 +324,17 @@ public class HomeActivity extends AppCompatActivity {
         {
 
         }
+        searchResultsText = findViewById(R.id.tv_SearchResults);
+        searchScrollView = findViewById(R.id.searchScrollView);
+        searchResult1IV = findViewById(R.id.iv_SearchResult1);
+        searchResult2IV = findViewById(R.id.iv_SearchResult2);
+        searchResult3IV = findViewById(R.id.iv_SearchResult3);
+        searchResult1TV = findViewById(R.id.tv_SearchResult1);
+        searchResult2TV = findViewById(R.id.tv_SearchResult2);
+        searchResult3TV = findViewById(R.id.tv_SearchResult3);
+        searchCardView1 = findViewById(R.id.searchCardView1);
+        searchCardView2 = findViewById(R.id.searchCardView2);
+        searchCardView3 = findViewById(R.id.searchCardView3);
 
         profilePic = findViewById(R.id.iv_ProfilePic);
         btnAddProfilePic = findViewById(R.id.btnAddProfilePic);
