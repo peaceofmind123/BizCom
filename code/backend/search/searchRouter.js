@@ -10,14 +10,18 @@ searchRouter.get('/',(req,res)=>{
     }
     else
     {
+        const regex = new RegExp(escapeRegex(req.query.query), 'gi');
         UserModel.find(
             {
-                $text:{$search:req.query.query},
+                $or:[{userName:{$regex:regex,$options:'i'}},{fName:{$regex:regex,$options:'i'}},
+                    {lName:{$regex:regex,$options:'i'}},{city:{$regex:regex,$options:'i'}},
+                    {country:{$regex:regex,$options:'i'}}]
 
             }
         )
 
             .exec((err,results)=>{
+            console.log(results);
                 if(err)
                 {
                     res.json({'response':'server error'});
@@ -32,9 +36,13 @@ searchRouter.get('/',(req,res)=>{
                     }
                     else
                     {
-                        console.log(results);
                         let companyNames = [];
-                        companyNames.push(results.userName);
+                        console.log(results);
+                        results.forEach(result=>{
+                            companyNames.push(result.userName);
+                        });
+
+
                         console.log(companyNames);
                         res.json(companyNames);
                     }
@@ -43,4 +51,7 @@ searchRouter.get('/',(req,res)=>{
             });
     }
 });
+function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
 module.exports = searchRouter;

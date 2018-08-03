@@ -85,9 +85,16 @@ public class HomeActivity extends AppCompatActivity {
                             }
                             else
                             {
-                                for(int i =0;i<result.getResult().size();i++)
+                                try
                                 {
-                                    System.out.println(result.getResult().get(i).toString());
+                                    for(int i =0;i<result.getResult().size();i++)
+                                    {
+                                        System.out.println(result.getResult().get(i).toString());
+                                    }
+                                }
+                                catch(NullPointerException e1)
+                                {
+                                    e1.printStackTrace();
                                 }
                             }
                         }
@@ -101,7 +108,7 @@ public class HomeActivity extends AppCompatActivity {
         while(companyNames.getResult().get(Integer.toString(i))!=null)
         {
             String companyName = companyNames.getResult().get(Integer.toString(i)).toString();
-            System.out.println(companyName);
+            System.out.println(cleanCompanyName(companyName));
             i++;
 
         }

@@ -167,7 +167,7 @@
                         android:layout_centerHorizontal="true"
                         android:background="@drawable/emptyimage"
 
-                        android:scaleType="centerCrop" />
+                        android:scaleType="fitCenter" />
 
                     <ImageButton
                         android:id="@+id/btn_AddBigImg"
