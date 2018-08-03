@@ -187,4 +187,44 @@ profileRouter.get('/viewImageTest',(req,res)=>{
 
     });
 });
+profileRouter.post('/updateAdditionalInfo',(req,res)=>{
+    console.log(req.body);
+    if(!req.body.userName || !req.body.additionalInfo)
+    {
+        console.log('wrong body params');
+        res.json({'response':'error'});
+    }
+    else
+    {
+        UserModel.findOne({userName:req.body.userName},(err,user)=>{
+           if(err)
+           {
+               console.log("username not found");
+               res.json({'response':'error'});
+           }
+           else {
+               if(!user.isLoggedIn)
+               {
+                   console.log("not logged in");
+                   res.json({'response':'not logged in'});
+               }
+               else
+               {
+                   user.additionalInfo = req.body.additionalInfo;
+                   user.save(err=>{
+                      if(err)
+                      {
+                          console.log("database error");
+                          res.json({'response':'error'});
+                      }
+                      else {
+                          console.log("success");
+                          res.json({'response':'success'});
+                      }
+                   });
+               }
+           }
+        });
+    }
+});
 module.exports = profileRouter;

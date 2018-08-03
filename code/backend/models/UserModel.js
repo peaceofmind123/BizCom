@@ -18,7 +18,8 @@ let UserSchema = new Schema({
     profilePicPath:String,
     mainAdPicPath:String,
     isLoggedIn: {type:Boolean, default:false},
-    score:Number
+    score:Number,
+    additionalInfo:String
 }, {collection: 'users'});
 UserSchema.index(
     {

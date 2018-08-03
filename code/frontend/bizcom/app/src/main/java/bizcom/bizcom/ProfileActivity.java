@@ -1,269 +1,348 @@
 package bizcom.bizcom;
 
 import android.annotation.SuppressLint;
-import android.content.CursorLoader;
+import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity  {
 
-    private ImageView profilePic, companyAdPic;
-    private ImageButton btn_AddUserImage, btn_EditUsername, btn_EditDescription, btn_EditAddInfo, btn_AddBigImg, btn_AddNext;
-    private EditText companyName, description;
-    private Button btn_Update;
-    private TextView additionalInfo;
+
+
+    private ImageView companyLogo, companyAdPic;
+    private ImageButton btn_addCompanyLogo,btn_AddNext,btn_AddCompanyAd;
+    private Button btn_Save;
+    private EditText  additionalInfo;
+    private TextView companyName;
     private RatingBar ratingBar;
-    private String selectedImagePath;
-    private String userType;
+    private LinearLayout finalLinearLayout;
+    private CardView cardView;
+
+    private ArrayList<CardView> cards;
+    private ArrayList<ImageButton> buttons;
+    private ArrayList<ImageView> images;
     private String userJson;
     private JSONObject user;
+    private static final int SELECT_REQUEST = 1;
     private String userName;
-    private RelativeLayout addImageNextLayout;
-    private List<ImageView> adImagesNext;
+    private String additionalInfoString;
+    private ProgressBar addInfoProgressBar;
+
+    private void ifNormalUser(){
+
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
-        ImageNetworkHelper.requestPermissions(this);
         setContentView(R.layout.activity_profile);
+
         initializeVariables();
-        clearCache();
         initializeView();
-        btn_AddUserImage.setOnClickListener(new View.OnClickListener() {
+        btn_Save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectImage(PICK_PROFILE_PIC);
+                additionalInfoString = additionalInfo.getText().toString();
+                saveAdditionalInfo();
             }
+        });
+        btn_addCompanyLogo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                selectImage();
+            }
+
+
         });
 
-        btn_AddBigImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectImage(PICK_AD_PIC);
-            }
-        });
+
+
+
+
+
+
+
+
         btn_AddNext.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                selectImage(PICK_NEXT_PIC);
+            public void onClick(View view) {
+
+                btn_AddNext.setVisibility(View.GONE);
+                addNextImageView();
             }
         });
-    }
 
-
-
-
-
-    public static boolean deleteDir(File dir) {
-        if (dir != null && dir.isDirectory()) {
-            String[] children = dir.list();
-            for (int i = 0; i < children.length; i++) {
-                boolean success = deleteDir(new File(dir, children[i]));
-                if (!success) {
-                    return false;
-                }
+        btn_AddCompanyAd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectImage();
             }
-            return dir.delete();
-        } else if(dir!= null && dir.isFile()) {
-            return dir.delete();
-        } else {
-            return false;
-        }
-    }
-    private void clearCache(){
-        try {
-            File dir = this.getCacheDir();
-            deleteDir(dir);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    private void initializeView() {
-
-        downloadProfilePic();
-        downloadMainAdPic();
-
-        //if the usertype is user,nothing can be edited except the rating bar
-
-        if(userType.equals("general")){
-
-            btn_AddBigImg.setVisibility(View.GONE);
-            btn_Update.setVisibility(View.GONE);
-            btn_AddNext.setVisibility(View.GONE);
-            companyName.setEnabled(false);
-            description.setEnabled(false);
-            additionalInfo.setEnabled(false);
-            if(companyAdPic.getDrawable()==null){
-                companyAdPic.setVisibility(View.GONE);
-
-            }
-
-        }
-        //if usertype  is not a general user
-        else{
-            ratingBar.setFocusable(false);
-        }
+        });
 
 
 
 
-
-
-        //if user is a companyfirm holder
-        //if(usertype == ..){
-        //
-        // }
+//        imageView.setImageResource(R.drawable.blurroad);
+//        imageView.setBackgroundResource(R.drawable.saverounded);
+//        imageView.setVisibility(View.VISIBLE);
+//        linearLayout.addView(imageView);
     }
 
-    private void downloadMainAdPic() {
+    private void saveAdditionalInfo() {
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("http")
                 .encodedAuthority(getString(R.string.urlBase))
                 .appendPath("profile")
-                .appendPath("getMainAdPic")
-                .appendQueryParameter("userName",userName);
-        ImageNetworkHelper.downloadImage(this,builder.build().toString(),R.id.iv_BigImg,R.drawable.emptyimage,R.drawable.emptyimage);
+                .appendPath("updateAdditionalInfo");
+        JSONObject jsonObject = new JSONObject();
+        try
+        {
+            jsonObject.put("additionalInfo",additionalInfoString);
+            jsonObject.put("userName",userName);
+        }
+        catch(JSONException e)
+        {
+            e.printStackTrace();
+        }
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, builder.build().toString(), jsonObject, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                addInfoProgressBar.setVisibility(View.GONE);
+                try
+                {
+                    String res = response.getString("response");
+                    if(!res.equals("success"))
+                    {
+                        DialogFragmentHelper.showDialogFragment(ProfileActivity.this,R.string.err_server_dialogMsg);
+                    }
+                }
+                catch(JSONException e)
+                {
+                    DialogFragmentHelper.showDialogFragment(ProfileActivity.this,R.string.err_server_dialogMsg);
+                }
+
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                    DialogFragmentHelper.showDialogFragment(ProfileActivity.this,R.string.err_server_nonresponsive_dialogMsg);
+            }
+        });
+        MySingleton.getMinstance(this).addToRequestQueue(jsonObjectRequest);
+
     }
 
-    private void downloadProfilePic() {
-        Uri.Builder builder = new Uri.Builder();
-        builder.scheme("http")
-                .encodedAuthority("192.168.1.67:8000")
-                .appendPath("profile")
-                .appendPath("getProfilePic")
-                .appendQueryParameter("userName",userName);
-        ImageNetworkHelper.downloadImage(this,builder.build().toString(),R.id.iv_profilePic,R.drawable.emptyimage,R.drawable.emptyimage);
+    private void initializeView() {
+        ImageNetworkHelper.getProfilePhoto(this,userName,R.id.iv_CompanyLogo);
+        companyName.setText(userName);
+        try
+        {
+            additionalInfoString = user.getString("additionalInfo");
+            additionalInfo.setText(additionalInfoString);
+        }
+        catch (JSONException e)
+        {
+
+        }
     }
 
-    private void initializeVariables() {
-        adImagesNext = new ArrayList<ImageView>();
-        addImageNextLayout = findViewById(R.id.adImageNextLayout);
+
+    private void initializeVariables(){
+
+        companyLogo=findViewById(R.id.iv_CompanyLogo);
+        companyAdPic=findViewById(R.id.iv_CompanyAd);
+
+        btn_addCompanyLogo=findViewById(R.id.btn_AddCompanyLogo);
+        btn_AddCompanyAd=findViewById(R.id.btn_AddCompanyAd);
+        btn_AddNext=findViewById(R.id.btn_AddNext);
+
+        btn_Save=findViewById(R.id.btn_Save);
+
+        companyName=findViewById(R.id.tv_CompanyName);
+        additionalInfo=findViewById(R.id.et_AdditionalInfo);
+
+        ratingBar=findViewById(R.id.ratingBar);
+
+        addInfoProgressBar = findViewById(R.id.addInfoProgress);
+        cards = new ArrayList<CardView>();
+
+        buttons = new ArrayList<ImageButton>();
+
+        images = new ArrayList<ImageView>();
         userJson = getIntent().getStringExtra(SignupActivity.EXTRA_USER_JSON);
         try {
             user = new JSONObject(userJson);
-            userType = user.getString("userType");
             userName = user.getString("userName");
         } catch (JSONException e) {
-            DialogFragmentHelper.showDialogFragment(this,R.string.err_general_dialogMsg);
-            e.printStackTrace();
+            DialogFragmentHelper.showDialogFragment(this,R.string.err_server_dialogMsg);
         }
-        profilePic = findViewById(R.id.iv_profilePic);
-        companyAdPic = findViewById(R.id.iv_BigImg);
-        btn_AddUserImage = findViewById(R.id.btn_UserImg);
 
-        btn_AddBigImg = findViewById(R.id.btn_AddBigImg);
-        btn_AddNext = findViewById(R.id.btn_AddNext);
-        companyName = findViewById(R.id.et_CompanyName);
-        description = findViewById(R.id.et_Description);
-        additionalInfo = findViewById(R.id.et_AdditonalInfo);
-        btn_Update = findViewById((R.id.btn_Update));
-        ratingBar=findViewById(R.id.ratingBar);
+
     }
 
+    private void selectImage(){
+
+        ImageNetworkHelper.selectImage(this,SELECT_REQUEST);
+
+        btn_AddNext.setVisibility(View.VISIBLE);
 
 
-    //selecting image from gallery
-
-    public void selectImage(int request){
-
-        Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        getIntent.setType("image/*");
-
-        Intent pickIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        pickIntent.setType("image/*");
-
-        Intent chooserIntent = Intent.createChooser(getIntent, "Select Image");
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] {pickIntent});
-
-        startActivityForResult(chooserIntent, request);
-
-    }
-    public static final int PICK_PROFILE_PIC =1; //this is for comparision with the request code
-    public static final int PICK_AD_PIC=2;
-    public static final int PICK_NEXT_PIC=3;
-
-
-    //getpathmethod
-
-    private String getPathFromURI(Uri contentUri) {
-        String[] proj = { MediaStore.Images.Media.DATA };
-        CursorLoader loader = new CursorLoader(getApplicationContext(), contentUri, proj, null, null, null);
-        Cursor cursor = loader.loadInBackground();
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        Uri.Builder builder = new Uri.Builder();
-        if(resultCode == RESULT_OK && data!=null){
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode==RESULT_OK &&data!=null)
+        {
             Uri selectedImageUri = data.getData();
-            selectedImagePath =  getPathFromURI(selectedImageUri);
-            if(requestCode == PICK_PROFILE_PIC)
+            String path = ImageNetworkHelper.getPathFromURI(this,selectedImageUri);
+            if(requestCode==SELECT_REQUEST)
             {
-                profilePic.setImageURI(selectedImageUri);
+                companyLogo.setImageURI(selectedImageUri);
+                Uri.Builder builder = new Uri.Builder();
                 builder.scheme("http")
                         .encodedAuthority(getString(R.string.urlBase))
                         .appendPath("profile")
                         .appendPath("uploadProfilePic");
-                String url = builder.build().toString();
-                ImageNetworkHelper.uploadImage(this,selectedImagePath,url,"userName",userName);
-
+                ImageNetworkHelper.uploadImage(this,path,builder.build().toString(),"userName",userName);
             }
-            else if (requestCode == PICK_AD_PIC)
-            {
-                companyAdPic.setImageURI(selectedImageUri);
-                builder.scheme("http")
-                        .encodedAuthority(getString(R.string.urlBase))
-                        .appendPath("profile")
-                        .appendPath("uploadAdPic")
-                        .appendQueryParameter("userName",userName);
-                String url = builder.build().toString();
-                ImageNetworkHelper.uploadImage(this,selectedImagePath,url,"userName",userName);
-
-            }
-            else
-            {
-                /*todo: add next pick logic*/
-                RelativeLayout.LayoutParams lparams = new RelativeLayout.LayoutParams(
-                        RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                ImageView imgViewNew=new ImageView(this);
-                imgViewNew.setLayoutParams(lparams);
-                adImagesNext.add(imgViewNew);
-                imgViewNew.setImageURI(selectedImageUri);
-                this.addImageNextLayout.addView(imgViewNew);
-            }
-
-
-
         }
+    }
+
+    private void addNextImageView(){
+
+        //pointer to the existing linear layout
+        finalLinearLayout = findViewById(R.id.finalLinearLayout);
+
+        //adding new cardview
+        CardView cardView = new CardView(ProfileActivity.this);
+
+
+        //parameteres for new cardview
+        LinearLayout.LayoutParams lb = new LinearLayout.LayoutParams(650,500);
+        lb.bottomMargin=6;
+        cardView.setLayoutParams(lb);
+        cardView.setContentPadding(4,4,4,4);
+
+
+
+
+
+
+        //for image addition in card
+        ImageView imageView = new ImageView(ProfileActivity.this);
+        CardView.LayoutParams cardParamsForImage = new CardView.LayoutParams(630,520);
+        cardParamsForImage.bottomMargin=4;
+
+
+
+
+        //for button addition in card
+        ImageButton btn_AddNewCompanyAd = new ImageButton(this);
+        CardView.LayoutParams cardParamsForButton = new CardView.LayoutParams(63,63);
+
+
+
+        //give image the parameteres
+        imageView.setLayoutParams(cardParamsForImage);
+
+        //give button the parameteres
+        btn_AddNewCompanyAd.setLayoutParams(cardParamsForButton);
+
+        //addtional properties for imageview
+        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        imageView.setBackgroundResource(R.drawable.edittextrounded);
+
+
+        //addtional properties for button
+        btn_AddNewCompanyAd.setBackgroundResource(R.drawable.saverounded);
+        btn_AddNewCompanyAd.setImageResource(R.drawable.addphoto1);
+
+
+        //add imageview to cardview
+        cardView.addView(imageView);
+
+        //add button to cardview
+        cardView.addView(btn_AddNewCompanyAd);
+
+        finalLinearLayout.addView(cardView);
+
+
+        cards.add(cardView);
+
+        images.add(imageView);
+
+        buttons.add(btn_AddNewCompanyAd);
+
+        buttons.get(buttons.size()-1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+
+
+
+                btn_AddNext.setVisibility(View.VISIBLE);
+                //bizcom.bizcom.ImageNetworkHelper.uploadImage(MainActivity.this,);
+
+            }
+        });
+
 
 
 
     }
+
+
+
+
+    private void updateCompanyName() {
+
+    }
+
+
+
+
 }
 
 
