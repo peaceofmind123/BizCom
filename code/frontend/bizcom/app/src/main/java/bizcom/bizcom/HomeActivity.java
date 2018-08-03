@@ -51,7 +51,7 @@ public class HomeActivity extends AppCompatActivity {
     private CardView searchCardView1;
     private CardView searchCardView2;
     private CardView searchCardView3;
-
+    private boolean hasBeenSearched = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +80,9 @@ public class HomeActivity extends AppCompatActivity {
             searchEditText.setError("Empty");
         else
         {
+            searchCardView1.setVisibility(View.GONE);
+            searchCardView2.setVisibility(View.GONE);
+            searchCardView3.setVisibility(View.GONE);
             Uri.Builder builder = new Uri.Builder();
             builder.scheme("http")
                     .encodedAuthority(this.getString(R.string.urlBase))
@@ -135,6 +138,7 @@ public class HomeActivity extends AppCompatActivity {
             ImageNetworkHelper.getProfilePhoto(this,searchResultsCompanyName.get(0),R.id.iv_SearchResult1);
 
         }
+
         if(searchResultsCompanyName.size()>1)
         {
             searchCardView2.setVisibility(View.VISIBLE);
