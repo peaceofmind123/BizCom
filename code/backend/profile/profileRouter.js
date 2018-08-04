@@ -245,6 +245,28 @@ profileRouter.get('/viewImageTest',(req,res)=>{
 
     });
 });
+profileRouter.post('/deleteExtraAdPic',(req,res)=>{
+   if(!req.body.userName || !req.body.number)
+   {
+       res.json({response:"error"});
+   }
+   else {
+       UserModel.findOne({userName:req.body.userName},(err,user)=>{
+           if(err || !user.isLoggedIn)
+           {
+               res.json({response:'error'});
+           }
+           else
+           {
+               delete user.additionalAdPicsPath[req.body.number];
+               console.log('success');
+               user.save();
+               res.json({response:'success'});
+
+           }
+       })
+   }
+});
 profileRouter.post('/updateAdditionalInfo',(req,res)=>{
     console.log(req.body);
     if(!req.body.userName || !req.body.additionalInfo)
@@ -285,62 +307,48 @@ profileRouter.post('/updateAdditionalInfo',(req,res)=>{
         });
     }
 });
-profileRouter.post('/uploadExtraAdPic',upload.single('image'),(req,res)=>{
-    let errorResponse = {'response':'error'};
-   if(!req.header('userName')|| !req.file)
-   {
-       res.json(errorResponse);
-   }
-   else
-   {
-       UserModel.findOne({userName:req.header('userName')},(err,user)=>{
-          if(err)
-          {
-              res.json(errorResponse);
-          }
-          else {
-              if(user===null)
-              {
-                  res.json(errorResponse);
-              }
-              else if(!user.isLoggedIn)
-              {
-                  res.json(errorResponse);
-              }
-              else {
-                  fs.readFile(req.file.path, function (err, data) {
-                      if(err)
-                      {
-                          res.json(errorResponse);
-                      }
-                      else {
-                          let newPath = req.file.path+".jpg";
-                          console.log(newPath);
-                          fs.writeFile(newPath, data, function (err) {
-                              if (err) {
-                                  res.json({'response': "Error"});
-                              } else {
-                                  user.additionalAdPicsPath.push(newPath);
-                                  user.save((err)=>{
-                                      if(err)
-                                      {
-                                          res.json(errorResponse);
-                                      }
-                                      else {
-                                          res.json({'response': "Saved"});
-                                      }
-                                  });
+profileRouter.post('/uploadExtraAdPic',upload.single('image'),(req,res)=> {
+    let errorResponse = {'response': 'error'};
+    if (!req.header('userName') || !req.file) {
+        res.json(errorResponse);
+    }
+    else {
+        UserModel.findOne({userName: req.header('userName')}, (err, user) => {
+            let errorResponse = {response: 'error'};
+            if (err) {
+                res.json(errorResponse);
+            }
+            else {
+                if (user === null) {
+                    res.json(errorResponse);
+                }
+                else if (!user.isLoggedIn) {
+                    res.json(errorResponse);
+                }
+                else {
 
-                              }
-                          });
-                      }
+                    let num = req.header('number');
+                    if(num && num<user.additionalAdPicsPath.length)
+                    {
+                        console.log('yes');
 
-                  });
-              }
-          }
-       });
-   }
+                        user.additionalAdPicsPath.splice(num,0,req.file.path);
+                        user.save();
+                    }
+                    else {
+                        user.additionalAdPicsPath.push(req.file.path);
+                        console.log('no');
+                        user.save();
+                    }
+
+                    res.json({response:'trial'});
+
+                }
+            }
+        });
+    }
 });
+
 profileRouter.post('/postRating',(req,res)=>{
    if(!req.body.userName || !req.body.rating ||isNaN(req.body.rating) || !req.body.viewerUserName)
    {
@@ -362,7 +370,7 @@ profileRouter.post('/postRating',(req,res)=>{
           }
           else {
                 UserModel.findOne({userName:req.body.userName},(err,user)=>{
-                    console.log(user);
+
                     if(user.userType!=="business")
                     {
                         console.log("Wrong user type");

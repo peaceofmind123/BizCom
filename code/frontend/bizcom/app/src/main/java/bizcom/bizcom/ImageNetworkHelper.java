@@ -13,12 +13,16 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.widget.ImageView;
 
+import com.android.volley.Request;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.ProgressCallback;
 import com.koushikdutta.ion.Response;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -97,12 +101,43 @@ public class ImageNetworkHelper {
         cursor.moveToFirst();
         return cursor.getString(column_index);
     }
+
     public static void uploadImage(Activity context,String path,String url,String headerName,String headerValue)
     {
         File f = new File(path);
 
         Future uploading = Ion.with(context)
                 .load("POST",url).addHeader(headerName,headerValue)
+                .uploadProgressHandler(new ProgressCallback() {
+                    @Override
+                    public void onProgress(long uploaded, long total) {
+                        System.out.println(uploaded/total*100);
+                    }
+                })
+                .setMultipartFile("image","image/jpeg", f)
+                .asString()
+                .withResponse()
+                .setCallback(new FutureCallback<Response<String>>() {
+                    @Override
+                    public void onCompleted(Exception e, Response<String> result) {
+                        try {
+                            JSONObject jobj = new JSONObject(result.getResult());
+
+
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                        }
+
+                    }
+                });
+    }
+    public static void uploadImage(Activity context,String path,String url,String headerName,String headerValue,String headerName1,String headerValue1)
+    {
+        File f = new File(path);
+
+        Future uploading = Ion.with(context)
+                .load("POST",url).addHeader(headerName,headerValue)
+                .addHeader(headerName1,headerValue1)
                 .uploadProgressHandler(new ProgressCallback() {
                     @Override
                     public void onProgress(long uploaded, long total) {
@@ -137,6 +172,25 @@ public class ImageNetworkHelper {
     }
 
 
+    public static void deleteImage(final ProfileActivity context, final String path, String url, String userNameHeading, String userName, String numberHeading, String number,final int requestNo) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put(userNameHeading,userName);
+            jsonObject.put(numberHeading,number);
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new com.android.volley.Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    context.hasBeenDeleted(requestNo,path);
+                }
+            }, new com.android.volley.Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
 
-
+                }
+            });
+            MySingleton.getMinstance(context).addToRequestQueue(jsonObjectRequest);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 }

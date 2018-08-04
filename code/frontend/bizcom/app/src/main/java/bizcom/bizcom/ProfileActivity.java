@@ -1,22 +1,10 @@
 package bizcom.bizcom;
 
-import android.annotation.SuppressLint;
-import android.app.Dialog;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
-import android.provider.MediaStore;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
-import android.text.InputType;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,17 +16,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.gson.JsonObject;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,7 +29,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class ProfileActivity extends AppCompatActivity  {
-
+    private static final int REQUEST_DELETE_THEN_UPLOAD = 90802;
+    private int extraAdSelectedImageViewID;
     private int addedImages=0;
     private static final int SELECT_REQUEST_EXTRAAD = 2;
     private ImageView companyLogo, companyAdPic;
@@ -405,6 +389,7 @@ public class ProfileActivity extends AppCompatActivity  {
 
         for(int i=0;i<noOfExtraAds;i++)
         {
+
             Uri.Builder builder = new Uri.Builder();
             builder.scheme("http")
                     .encodedAuthority(getString(R.string.urlBase))
@@ -510,13 +495,27 @@ public class ProfileActivity extends AppCompatActivity  {
             }
             else if(requestCode==SELECT_REQUEST_EXTRAAD)
             {
-                images.get(images.size()-1).setImageURI(selectedImageUri);
+                images.get(extraAdSelectedImageViewID-1).setImageURI(selectedImageUri);
                 Uri.Builder builder = new Uri.Builder();
-                builder.scheme("http")
-                        .encodedAuthority(getString(R.string.urlBase))
-                        .appendPath("profile")
-                        .appendPath("uploadExtraAdPic");
-                ImageNetworkHelper.uploadImage(this,path,builder.build().toString(),"userName",userName);
+                ImageView imageView = findViewById(extraAdSelectedImageViewID);
+
+                if(images.size()==extraAdSelectedImageViewID && imageView.getDrawable() ==null)
+                {
+                    builder.scheme("http")
+                            .encodedAuthority(getString(R.string.urlBase))
+                            .appendPath("profile")
+                            .appendPath("uploadExtraAdPic");
+                    ImageNetworkHelper.uploadImage(this,path,builder.build().toString(),"userName",userName,"number",Integer.toString(extraAdSelectedImageViewID-1));
+                }
+                else
+                {
+                    builder.scheme("http")
+                            .encodedAuthority(getString(R.string.urlBase))
+                            .appendPath("profile")
+                            .appendPath("deleteExtraAdPic");
+                    ImageNetworkHelper.deleteImage(this,path,builder.build().toString(),"userName",userName,"number",Integer.toString(extraAdSelectedImageViewID-1),REQUEST_DELETE_THEN_UPLOAD);
+                }
+
             }
             else if(requestCode==SELECT_MAINAD_REQUEST)
             {
@@ -612,14 +611,14 @@ public class ProfileActivity extends AppCompatActivity  {
 
         buttons.add(btn_AddNewCompanyAd);
 
-
+        final int currentID = buttons.size();
         buttons.get(buttons.size()-1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
 
 
-
+                extraAdSelectedImageViewID = currentID;
                 ImageNetworkHelper.selectImage(ProfileActivity.this,SELECT_REQUEST_EXTRAAD);
                 btn_AddNext.setVisibility(View.VISIBLE);
                 //bizcom.bizcom.ImageNetworkHelper.uploadImage(MainActivity.this,);
@@ -643,8 +642,18 @@ public class ProfileActivity extends AppCompatActivity  {
     }
 
 
+    public void hasBeenDeleted(int requestNo,String path) {
+        if(requestNo == REQUEST_DELETE_THEN_UPLOAD)
+        {
+            Uri.Builder builder = new Uri.Builder();
+            builder.scheme("http")
+                    .encodedAuthority(getString(R.string.urlBase))
+                    .appendPath("profile")
+                    .appendPath("uploadExtraAdPic");
+            ImageNetworkHelper.uploadImage(this,path,builder.build().toString(),"userName",userName,"number",Integer.toString(extraAdSelectedImageViewID-1));
 
-
+        }
+    }
 }
 
 
