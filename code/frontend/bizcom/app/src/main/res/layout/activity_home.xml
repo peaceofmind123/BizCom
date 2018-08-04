@@ -12,15 +12,16 @@
 
 
     <ScrollView
+        android:id="@+id/mainScrollView"
         android:layout_width="395dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+
         android:layout_marginEnd="8dp"
-
         android:layout_marginStart="18dp"
+
+
         android:layout_marginTop="8dp"
-
-
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.621"
@@ -29,12 +30,12 @@
         app:layout_constraintVertical_bias="0.481">
 
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/mainConstraintLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
 
 
-            >
+            android:layout_marginTop="20dp">
 
 
             <EditText
@@ -394,14 +395,12 @@
                                 android:layout_height="95dp"
                                 android:background="@drawable/squarebackground"
                                 android:padding="7dp"
-                                android:scaleType="fitCenter"
-                                android:src="@drawable/adidas" />
+                                android:scaleType="fitCenter" />
 
                             <TextView
                                 android:id="@+id/tv_Company1"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Adidas" />
+                                android:layout_height="wrap_content" />
 
 
                         </LinearLayout>
@@ -432,14 +431,12 @@
                                 android:layout_height="95dp"
                                 android:background="@drawable/squarebackground"
                                 android:padding="10dp"
-                                android:scaleType="centerCrop"
-                                android:src="@drawable/ncell" />
+                                android:scaleType="centerCrop" />
 
                             <TextView
                                 android:id="@+id/tv_Company2"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Ncell" />
+                                android:layout_height="wrap_content" />
 
                         </LinearLayout>
 
@@ -467,14 +464,12 @@
                                 android:layout_height="95dp"
                                 android:background="@drawable/squarebackground"
                                 android:padding="10dp"
-                                android:scaleType="centerCrop"
-                                android:src="@drawable/bmw" />
+                                android:scaleType="centerCrop" />
 
                             <TextView
                                 android:id="@+id/tv_Company3"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="BMW" />
+                                android:layout_height="wrap_content" />
 
 
                         </LinearLayout>
@@ -551,14 +546,12 @@
                                 android:layout_height="95dp"
                                 android:background="@drawable/squarebackground"
                                 android:padding="10dp"
-                                android:scaleType="centerCrop"
-                                android:src="@drawable/linkedin" />
+                                android:scaleType="centerCrop" />
 
                             <TextView
                                 android:id="@+id/tv_RecCompany1"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="LinkedIn" />
+                                android:layout_height="wrap_content" />
 
                         </LinearLayout>
 
@@ -587,14 +580,12 @@
                                 android:layout_height="95dp"
                                 android:background="@drawable/squarebackground"
                                 android:padding="10dp"
-                                android:scaleType="centerCrop"
-                                android:src="@drawable/levis" />
+                                android:scaleType="centerCrop" />
 
                             <TextView
                                 android:id="@+id/tv_RecCompany2"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="LEVI'S" />
+                                android:layout_height="wrap_content" />
 
 
                         </LinearLayout>
@@ -625,14 +616,12 @@
                                 android:layout_height="95dp"
                                 android:background="@drawable/squarebackground"
                                 android:padding="10dp"
-                                android:scaleType="centerCrop"
-                                android:src="@drawable/test" />
+                                android:scaleType="centerCrop" />
 
                             <TextView
                                 android:id="@+id/tv_RecCompany3"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="EASTMAN" />
+                                android:layout_height="wrap_content" />
 
                         </LinearLayout>
 

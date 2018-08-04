@@ -61,6 +61,7 @@ public class ProfileActivity extends AppCompatActivity  {
     private JSONObject user;
     private static final int SELECT_REQUEST = 1;
     private String userName;
+    private JSONObject viewerUser;
     private String additionalInfoString;
     private ProgressBar addInfoProgressBar;
 
@@ -211,8 +212,11 @@ public class ProfileActivity extends AppCompatActivity  {
 
         images = new ArrayList<ImageView>();
         userJson = getIntent().getStringExtra(SignupActivity.EXTRA_USER_JSON);
+        String viewerUserString = getIntent().getStringExtra(SignupActivity.EXTRA_VIEWER_JSON);
+
         try {
             user = new JSONObject(userJson);
+            viewerUser = new JSONObject(viewerUserString);
             userName = user.getString("userName");
         } catch (JSONException e) {
             DialogFragmentHelper.showDialogFragment(this,R.string.err_server_dialogMsg);

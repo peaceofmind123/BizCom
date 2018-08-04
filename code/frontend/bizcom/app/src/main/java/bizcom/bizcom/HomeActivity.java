@@ -11,8 +11,12 @@ import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
@@ -22,7 +26,9 @@ import com.koushikdutta.ion.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class HomeActivity extends AppCompatActivity {
     private ImageView profilePic, ad1,ad2,ad3,recAd1,recAd2,recAd3;
@@ -52,6 +58,17 @@ public class HomeActivity extends AppCompatActivity {
     private CardView searchCardView2;
     private CardView searchCardView3;
     private boolean hasBeenSearched = false;
+    private ScrollView mainScrollView;
+    private int[] imageViewIDS = new int[]{R.id.iv_Ad1,R.id.iv_Ad2,R.id.iv_Ad3
+            ,R.id.iv_SearchResult1,R.id.iv_SearchResult2,
+            R.id.iv_SearchResult3,R.id.iv_RecAd1,R.id.iv_RecAd2,
+            R.id.iv_RecAd3};
+    private int[] textViewIDS = new int[] {R.id.tv_Company1,R.id.tv_Company2,
+                                             R.id.tv_Company3,R.id.tv_SearchResult1,
+                                            R.id.tv_SearchResult2,R.id.tv_SearchResult3,
+                                            R.id.tv_RecCompany1,R.id.tv_RecCompany2,
+                                            R.id.tv_RecCompany3};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +89,110 @@ public class HomeActivity extends AppCompatActivity {
                 search();
             }
         });
+
+        ad1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleImageClick(R.id.iv_Ad1);
+            }
+        });
+        ad2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleImageClick(R.id.iv_Ad2);
+            }
+        });
+        ad3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleImageClick(R.id.iv_Ad3);
+            }
+        });
+        recAd1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleImageClick(R.id.iv_RecAd1);
+            }
+        });
+        recAd2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleImageClick(R.id.iv_RecAd2);
+            }
+        });
+        recAd3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleImageClick(R.id.iv_RecAd3);
+            }
+        });
+        searchResult1IV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleImageClick(R.id.iv_SearchResult1);
+            }
+        });
+        searchResult2IV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleImageClick(R.id.iv_SearchResult2);
+            }
+        });
+        searchResult3IV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleImageClick(R.id.iv_SearchResult3);
+            }
+        });
+    }
+
+    private void handleImageClick(int id) {
+        HashMap<Integer,Integer> ivToEtmap=new HashMap<>(9);
+        for(int i =0;i<9;i++)
+        {
+            ivToEtmap.put(imageViewIDS[i],textViewIDS[i]);
+        }
+        TextView tv = findViewById(ivToEtmap.get(id));
+        String companyName = tv.getText().toString();
+        JSONObject userRequest = new JSONObject();
+        try {
+            userRequest.put("userName",companyName);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("http")
+                .encodedAuthority(getString(R.string.urlBase))
+                .appendPath("userAccounts")
+                .appendPath("getUserDetails");
+        JsonObjectRequest viewerGetRequest = new JsonObjectRequest(Request.Method.POST, builder.build().toString(), userRequest,
+                new com.android.volley.Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try
+                        {
+                            String errorResponse = response.getString("userName");
+                            Intent intent = new Intent(HomeActivity.this,ProfileActivity.class);
+                            intent.putExtra(SignupActivity.EXTRA_USER_JSON,response.toString());
+                            intent.putExtra(SignupActivity.EXTRA_VIEWER_JSON,user.toString());
+                            HomeActivity.this.startActivity(intent);
+                        }
+                        catch (JSONException e)
+                        {
+                            //means an error
+                            DialogFragmentHelper.showDialogFragment(HomeActivity.this,R.string.err_server_dialogMsg);
+                        }
+
+                    }
+                }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                    DialogFragmentHelper.showDialogFragment(HomeActivity.this,R.string.err_server_nonresponsive_dialogMsg);
+            }
+        });
+        MySingleton.getMinstance(this).addToRequestQueue(viewerGetRequest);
+
+
     }
 
     private void search() {
@@ -238,7 +359,7 @@ public class HomeActivity extends AppCompatActivity {
     private String cleanCompanyName(String companyName)
     {
         if(!companyName.equals("null"))
-        return companyName.substring(1,companyName.length()-1).toUpperCase();
+        return companyName.substring(1,companyName.length()-1);
         else throw new NullPointerException("Empty String Recieved");
     }
     private void handleCompanyNames(JsonObject companies) {
@@ -343,6 +464,7 @@ public class HomeActivity extends AppCompatActivity {
         searchCardView1 = findViewById(R.id.searchCardView1);
         searchCardView2 = findViewById(R.id.searchCardView2);
         searchCardView3 = findViewById(R.id.searchCardView3);
+        mainScrollView = findViewById(R.id.mainScrollView);
 
         profilePic = findViewById(R.id.iv_ProfilePic);
         btnAddProfilePic = findViewById(R.id.btnAddProfilePic);

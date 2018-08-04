@@ -50,6 +50,7 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
     public static final String EXTRA_USERNAME = "com.bizcom.bizcom.USERNAME";
     public static final String EXTRA_USER_JSON = "com.bizcom.bizcom.USER_JSON";
     public static final String EXTRA_USERTYPE = "com.bizcom.bizcom.USERTYPE";
+    public static final String EXTRA_VIEWER_JSON = "com.bizcom.bizcom.VIEWER";
     ProgressBar progressBar;
     String fName;
     EditText fNameText;
