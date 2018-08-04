@@ -51,4 +51,20 @@
     <string name="forgotPasswordEnterNewPasswordHeading">Enter the new password to continue</string>
     <string name="not_loggged_in_dialogMsg">You have not been logged in</string>
     <string name="logout">Logout</string>
+    <string name="title_activity_welcome">Home Screen</string>
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">GOT IT</string>
+
+    <string name="slide_1_title">Welcome</string>
+    <string name="slide_1_desc">A Business Communication Platform</string>
+
+    <string name="slide_2_title">Grow your business</string>
+    <string name="slide_2_desc">See whats new in the world right now.</string>
+
+    <string name="slide_3_title">Get Started</string>
+    <string name="slide_3_desc">Quickly set up ads to reach the people most intesting in your business or product</string>
+
+
+
 </resources>
