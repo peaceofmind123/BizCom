@@ -32,4 +32,27 @@ uaRouter.post('/getUserDetails',(req,res)=>{
        });
    }
 });
+uaRouter.post('/logout',(req,res)=>{
+    if(req.body.userName)
+    {
+        UserModel.findOne({userName:req.body.userName},(err,user)=>{
+           if(user && user.isLoggedIn)
+           {
+               user.isLoggedIn = false;
+               user.save(err=>{
+                   if(err)
+                   {
+                       res.json({'response':'error'});
+                   }
+                   else {
+                       res.json({'response':'success'});
+                   }
+               });
+           }
+           else {
+               res.json({response:'error'});
+           }
+        });
+    }
+});
 module.exports = uaRouter;

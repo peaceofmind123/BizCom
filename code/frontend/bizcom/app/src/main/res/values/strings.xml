@@ -50,4 +50,5 @@
     <string name="urlBase">192.168.1.67:8000</string>
     <string name="forgotPasswordEnterNewPasswordHeading">Enter the new password to continue</string>
     <string name="not_loggged_in_dialogMsg">You have not been logged in</string>
+    <string name="logout">Logout</string>
 </resources>
