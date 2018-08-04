@@ -73,6 +73,7 @@ profileRouter.post('/uploadAdPic',upload.single('image'),(req,res)=>{
     let newPath = dirname + userName+"mainAdPic.jpg";
     if(userName ===null)
     {
+
         res.json({'response':"error"});
     }
     UserModel.findOne({userName:userName},(err,user)=>{
@@ -80,7 +81,7 @@ profileRouter.post('/uploadAdPic',upload.single('image'),(req,res)=>{
         {
             res.json({'response':'error'});
         }
-        if(user===null)
+        else if(user===null)
         {
             res.json({'response':'username not found'});
         }
@@ -226,5 +227,61 @@ profileRouter.post('/updateAdditionalInfo',(req,res)=>{
            }
         });
     }
+});
+profileRouter.post('/uploadExtraAdPic',upload.single('image'),(req,res)=>{
+    let errorResponse = {'response':'error'};
+   if(!req.header('userName')|| !req.file)
+   {
+       res.json(errorResponse);
+   }
+   else
+   {
+       UserModel.findOne({userName:req.header('userName')},(err,user)=>{
+          if(err)
+          {
+              res.json(errorResponse);
+          }
+          else {
+              if(user===null)
+              {
+                  res.json(errorResponse);
+              }
+              else if(!user.isLoggedIn)
+              {
+                  res.json(errorResponse);
+              }
+              else {
+                  fs.readFile(req.file.path, function (err, data) {
+                      if(err)
+                      {
+                          res.json(errorResponse);
+                      }
+                      else {
+                          let newPath = req.file.path+".jpg";
+                          console.log(newPath);
+                          fs.writeFile(newPath, data, function (err) {
+                              if (err) {
+                                  res.json({'response': "Error"});
+                              } else {
+                                  user.additionalAdPicsPath.push(newPath);
+                                  user.save((err)=>{
+                                      if(err)
+                                      {
+                                          res.json(errorResponse);
+                                      }
+                                      else {
+                                          res.json({'response': "Saved"});
+                                      }
+                                  });
+
+                              }
+                          });
+                      }
+
+                  });
+              }
+          }
+       });
+   }
 });
 module.exports = profileRouter;

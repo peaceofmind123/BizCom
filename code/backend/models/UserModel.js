@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-
+let UserReviewSchema = new Schema({
+    userName:String,
+    rating:Number
+});
 let UserSchema = new Schema({
     fName: String,
     lName: String,
@@ -19,7 +22,9 @@ let UserSchema = new Schema({
     mainAdPicPath:String,
     isLoggedIn: {type:Boolean, default:false},
     score:Number,
-    additionalInfo:String
+    additionalInfo:String,
+    additionalAdPicsPath:[String],
+    userReviews: [UserReviewSchema]
 }, {collection: 'users'});
 UserSchema.index(
     {

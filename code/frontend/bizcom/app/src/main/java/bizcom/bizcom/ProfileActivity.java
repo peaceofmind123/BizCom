@@ -45,7 +45,7 @@ import java.util.ArrayList;
 public class ProfileActivity extends AppCompatActivity  {
 
 
-
+    private static final int SELECT_REQUEST_EXTRAAD = 2;
     private ImageView companyLogo, companyAdPic;
     private ImageButton btn_addCompanyLogo,btn_AddNext,btn_AddCompanyAd;
     private Button btn_Save;
@@ -61,6 +61,7 @@ public class ProfileActivity extends AppCompatActivity  {
     private String userJson;
     private JSONObject user;
     private static final int SELECT_REQUEST = 1;
+    private static final int SELECT_MAINAD_REQUEST=3;
     private String userName;
     private JSONObject viewerUser;
     private String additionalInfoString;
@@ -80,6 +81,7 @@ public class ProfileActivity extends AppCompatActivity  {
 
         initializeVariables();
         initializeView();
+        ImageNetworkHelper.requestPermissions(this);
         btn_Save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,7 +119,7 @@ public class ProfileActivity extends AppCompatActivity  {
         btn_AddCompanyAd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectImage();
+                addCompanyAd();
             }
         });
 
@@ -128,6 +130,10 @@ public class ProfileActivity extends AppCompatActivity  {
 //        imageView.setBackgroundResource(R.drawable.saverounded);
 //        imageView.setVisibility(View.VISIBLE);
 //        linearLayout.addView(imageView);
+    }
+
+    private void addCompanyAd() {
+        ImageNetworkHelper.selectImage(this,SELECT_MAINAD_REQUEST);
     }
 
     private void saveAdditionalInfo() {
@@ -294,6 +300,26 @@ public class ProfileActivity extends AppCompatActivity  {
                         .appendPath("uploadProfilePic");
                 ImageNetworkHelper.uploadImage(this,path,builder.build().toString(),"userName",userName);
             }
+            else if(requestCode==SELECT_REQUEST_EXTRAAD)
+            {
+                images.get(images.size()-1).setImageURI(selectedImageUri);
+                Uri.Builder builder = new Uri.Builder();
+                builder.scheme("http")
+                        .encodedAuthority(getString(R.string.urlBase))
+                        .appendPath("profile")
+                        .appendPath("uploadExtraAdPic");
+                ImageNetworkHelper.uploadImage(this,path,builder.build().toString(),"userName",userName);
+            }
+            else if(requestCode==SELECT_MAINAD_REQUEST)
+            {
+                companyAdPic.setImageURI(selectedImageUri);
+                Uri.Builder builder = new Uri.Builder();
+                builder.scheme("http")
+                        .encodedAuthority(getString(R.string.urlBase))
+                        .appendPath("profile")
+                        .appendPath("uploadAdPic");
+                ImageNetworkHelper.uploadImage(this,path,builder.build().toString(),"userName",userName);
+            }
         }
     }
 
@@ -370,7 +396,7 @@ public class ProfileActivity extends AppCompatActivity  {
 
 
 
-
+                ImageNetworkHelper.selectImage(ProfileActivity.this,SELECT_REQUEST_EXTRAAD);
                 btn_AddNext.setVisibility(View.VISIBLE);
                 //bizcom.bizcom.ImageNetworkHelper.uploadImage(MainActivity.this,);
 
@@ -382,7 +408,10 @@ public class ProfileActivity extends AppCompatActivity  {
 
     }
 
+    private void handleExtraAd() {
+        ImageNetworkHelper.selectImage(this,SELECT_REQUEST_EXTRAAD);
 
+    }
 
 
     private void updateCompanyName() {
