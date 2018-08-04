@@ -242,6 +242,7 @@ public class LoginActivity extends AppCompatActivity {
                                    if(userType.equals("business"))
                                    {
                                        Intent intent = new Intent(LoginActivity.this,ProfileActivity.class);
+                                       intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                        intent.putExtra(SignupActivity.EXTRA_USER_JSON,user);
                                        intent.putExtra(SignupActivity.EXTRA_VIEWER_JSON,user);
                                        startActivity(intent);
@@ -249,6 +250,7 @@ public class LoginActivity extends AppCompatActivity {
                                    else
                                    {
                                        Intent intent = new Intent(LoginActivity.this,HomeActivity.class);
+                                       intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                        intent.putExtra(SignupActivity.EXTRA_USER_JSON,user);
                                        startActivity(intent);
                                    }

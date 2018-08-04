@@ -171,6 +171,7 @@ public class ConfirmationActivity extends AppCompatActivity{
 
     private void startProfileActivity() {
         Intent intent = new Intent(ConfirmationActivity.this, ProfileActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(SignupActivity.EXTRA_USER_JSON,jsonStringUser);
         intent.putExtra(SignupActivity.EXTRA_VIEWER_JSON,jsonStringUser); //here the viewer is the same as the user
         startActivity(intent);
@@ -178,6 +179,7 @@ public class ConfirmationActivity extends AppCompatActivity{
 
     private void startHomeActivity() {
         Intent intent = new Intent(ConfirmationActivity.this,HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(SignupActivity.EXTRA_USER_JSON,jsonStringUser);
         startActivity(intent);
     }

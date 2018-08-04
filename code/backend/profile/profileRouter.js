@@ -152,6 +152,63 @@ profileRouter.get('/getProfilePic',(req,res)=>{
 
     });
 });
+profileRouter.get('/getExtraAdPicNo',(req,res)=>{
+   let errorJson = {'response':'error'};
+    if(!req.query.userName)
+   {
+        res.json(errorJson);
+   }
+   else {
+        UserModel.findOne({userName:req.query.userName},(err,user)=>{
+            if(user.additionalAdPicsPath)
+            {
+                res.json({'number':user.additionalAdPicsPath.length});
+            }
+            else
+            {
+                res.json({'number':0});
+            }
+        });
+    }
+});
+profileRouter.get('/getExtraAdPic',(req,res)=>{
+   if(!req.query.userName||!req.query.number || isNaN(req.query.number))
+   {
+       res.json({'response':'error'});
+   }
+   else {
+       UserModel.findOne({userName:req.query.userName},(err,user)=>{
+          if(!user.additionalAdPicsPath)
+          {
+              res.json({'response':'error'});
+          }
+          else {
+              if(req.query.number>=user.additionalAdPicsPath.length)
+              {
+                  res.json({'response':'error'});
+              }
+              else {
+                  let filePath = path.join(__basedir,user.additionalAdPicsPath[req.query.number]);
+                  console.log(filePath);
+                  fs.readFile(filePath,(err,image)=>{
+                      if(err)
+                      {
+                          console.log(err);
+                          res.json({'response':'error'});
+                      }
+                      else
+                      {
+                          res.writeHead(200,{'Content-Type':'image/jpg'});
+                          res.end(image,'binary');
+                      }
+
+                  });
+              }
+
+          }
+       });
+   }
+});
 profileRouter.get('/getMainAdPic',(req,res)=>{
     let userName = req.query.userName;
     let file = userName+"mainAdPic.jpg";

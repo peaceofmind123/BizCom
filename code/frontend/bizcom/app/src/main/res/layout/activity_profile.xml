@@ -72,7 +72,7 @@
                     <ImageButton
                         android:id="@+id/btn_AddCompanyAd"
                         android:layout_width="32dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="32dp"
 
                         android:background="@drawable/saverounded"
                         android:src="@drawable/addphoto1" />

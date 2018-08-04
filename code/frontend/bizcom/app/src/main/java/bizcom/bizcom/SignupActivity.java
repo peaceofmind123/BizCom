@@ -180,8 +180,8 @@ public class SignupActivity extends AppCompatActivity implements AdapterView.OnI
     private String getJson() throws Exception {
         fName = fNameText.getText().toString();
         lName = lNameText.getText().toString();
-        userName = userNameText.getText().toString();
-        email = emailText.getText().toString();
+        userName = userNameText.getText().toString().toLowerCase();
+        email = emailText.getText().toString().toLowerCase();
         password = passwordText.getText().toString();
         confirmPassword = confirmPasswordText.getText().toString();
         phone = phoneText.getText().toString();

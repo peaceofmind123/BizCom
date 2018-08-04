@@ -18,6 +18,7 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -44,7 +45,7 @@ import java.util.ArrayList;
 
 public class ProfileActivity extends AppCompatActivity  {
 
-
+    private int addedImages=0;
     private static final int SELECT_REQUEST_EXTRAAD = 2;
     private ImageView companyLogo, companyAdPic;
     private ImageButton btn_addCompanyLogo,btn_AddNext,btn_AddCompanyAd;
@@ -183,6 +184,9 @@ public class ProfileActivity extends AppCompatActivity  {
     }
 
     private void initializeView() {
+        getMainAdPic();
+        getExtraAdPics();
+        hideRatingForBusinessUser();
         try
         {
             String viewerUserType=viewerUser.getString("userType");
@@ -206,6 +210,91 @@ public class ProfileActivity extends AppCompatActivity  {
         catch (JSONException e)
         {
 
+        }
+    }
+
+    private void hideRatingForBusinessUser() {
+        try
+        {
+            String viewerUserType = viewerUser.getString("userType");
+            if(viewerUserType.equals("business"))
+            {
+                ratingBar.setEnabled(false);
+                ratingBar.setVisibility(View.GONE);
+
+            }
+        }
+        catch(JSONException e)
+        {
+
+        }
+        
+    }
+
+    private void getMainAdPic() {
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("http")
+                .encodedAuthority(getString(R.string.urlBase))
+                .appendPath("profile")
+                .appendPath("getMainAdPic")
+                .appendQueryParameter("userName",userName);
+        ImageNetworkHelper.downloadImage(this,builder.build().toString(),
+                R.id.iv_CompanyAd,R.drawable.emptyimage,R.drawable.emptyimage);
+    }
+
+    private void getExtraAdPics() {
+            Uri.Builder builder = new Uri.Builder();
+            builder.scheme("http")
+                .encodedAuthority(getString(R.string.urlBase))
+                .appendPath("profile")
+                .appendPath("getExtraAdPicNo")
+                .appendQueryParameter("userName",userName);
+
+            JSONObject jsonObject = new JSONObject();
+            try
+            {
+                jsonObject.put("userName",userName);
+            }
+            catch(JSONException e)
+            {
+                e.printStackTrace();
+            }
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, builder.build().toString(), jsonObject,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                                try
+                                {
+                                    int noOfExtraAds = response.getInt("number");
+                                    handleExtraAdPhotos(noOfExtraAds);
+                                }
+                                catch (JSONException e)
+                                {
+                                    DialogFragmentHelper.showDialogFragment(ProfileActivity.this,"Error retrieving ads, please reload to continue");
+                                }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    DialogFragmentHelper.showDialogFragment(ProfileActivity.this,"Error retrieving ads, please reload to continue");
+                }
+            });
+            MySingleton.getMinstance(this).addToRequestQueue(jsonObjectRequest);
+    }
+
+    private void handleExtraAdPhotos(int noOfExtraAds) {
+
+        for(int i=0;i<noOfExtraAds;i++)
+        {
+            Uri.Builder builder = new Uri.Builder();
+            builder.scheme("http")
+                    .encodedAuthority(getString(R.string.urlBase))
+                    .appendPath("profile")
+                    .appendPath("getExtraAdPic")
+                    .appendQueryParameter("userName",userName)
+                    .appendQueryParameter("number",Integer.toString(i));
+            addNextImageView();
+            ImageNetworkHelper.downloadImage(this,builder.build().toString(),images.get(images.size()-1).getId(),R.drawable.emptyimage,R.drawable.emptyimage);
         }
     }
 
@@ -324,7 +413,7 @@ public class ProfileActivity extends AppCompatActivity  {
     }
 
     private void addNextImageView(){
-
+        addedImages++;
         //pointer to the existing linear layout
         finalLinearLayout = findViewById(R.id.finalLinearLayout);
 
@@ -333,7 +422,7 @@ public class ProfileActivity extends AppCompatActivity  {
 
 
         //parameteres for new cardview
-        LinearLayout.LayoutParams lb = new LinearLayout.LayoutParams(650,500);
+        LinearLayout.LayoutParams lb = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         lb.bottomMargin=6;
         cardView.setLayoutParams(lb);
         cardView.setContentPadding(4,4,4,4);
@@ -343,18 +432,34 @@ public class ProfileActivity extends AppCompatActivity  {
 
 
 
+
         //for image addition in card
+        final float scale = this.getResources().getDisplayMetrics().density;
+//        int imagewidth = (int) (450*scale + 0.5f);
+//        int imageheight = (int)(300*scale + 0.5f);
         ImageView imageView = new ImageView(ProfileActivity.this);
-        CardView.LayoutParams cardParamsForImage = new CardView.LayoutParams(630,520);
+        imageView.setId(addedImages);
+        CardView.LayoutParams cardParamsForImage = new CardView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
         cardParamsForImage.bottomMargin=4;
+
 
 
 
 
         //for button addition in card
         ImageButton btn_AddNewCompanyAd = new ImageButton(this);
-        CardView.LayoutParams cardParamsForButton = new CardView.LayoutParams(63,63);
 
+
+        CardView.LayoutParams cardParamsForButton = new CardView.LayoutParams(70,70);
+        try {
+            if (viewerUser.getString("userType").equals("general")){
+
+                btn_AddNewCompanyAd.setVisibility(View.INVISIBLE);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
 
         //give image the parameteres
