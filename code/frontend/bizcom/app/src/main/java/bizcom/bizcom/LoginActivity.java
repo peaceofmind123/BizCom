@@ -243,6 +243,7 @@ public class LoginActivity extends AppCompatActivity {
                                    {
                                        Intent intent = new Intent(LoginActivity.this,ProfileActivity.class);
                                        intent.putExtra(SignupActivity.EXTRA_USER_JSON,user);
+                                       intent.putExtra(SignupActivity.EXTRA_VIEWER_JSON,user);
                                        startActivity(intent);
                                    }
                                    else

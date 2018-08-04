@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -64,6 +65,7 @@ public class ProfileActivity extends AppCompatActivity  {
     private JSONObject viewerUser;
     private String additionalInfoString;
     private ProgressBar addInfoProgressBar;
+    private CardView finalCardview;
 
     private void ifNormalUser(){
 
@@ -175,6 +177,19 @@ public class ProfileActivity extends AppCompatActivity  {
     }
 
     private void initializeView() {
+        try
+        {
+            String viewerUserType=viewerUser.getString("userType");
+            if(viewerUserType.equals("general"))
+            {
+                disableEditWidgets();
+            }
+        }
+        catch(JSONException e)
+        {
+            DialogFragmentHelper.showDialogFragment(this,"An error occoured, please try again");
+            disableEditWidgets();
+        }
         ImageNetworkHelper.getProfilePhoto(this,userName,R.id.iv_CompanyLogo);
         companyName.setText(userName);
         try
@@ -188,6 +203,35 @@ public class ProfileActivity extends AppCompatActivity  {
         }
     }
 
+    private void disableEditWidgets() {
+
+        try {
+            String additionalInformation = user.getString("additionalInfo");
+            System.out.println(additionalInformation);
+            System.out.println(additionalInformation.matches(""));
+            if (additionalInformation.isEmpty())        {
+                cardView.setVisibility(View.GONE);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if(companyAdPic.getDrawable()==null)
+        {
+            finalCardview.setVisibility(View.GONE);
+        }
+            btn_addCompanyLogo.setVisibility(View.INVISIBLE);
+            btn_addCompanyLogo.setEnabled(false);
+            btn_AddCompanyAd.setVisibility(View.INVISIBLE);
+            btn_AddCompanyAd.setEnabled(false);
+            btn_AddNext.setVisibility(View.GONE);
+            btn_AddNext.setEnabled(false);
+            additionalInfo.setEnabled(false);
+            additionalInfo.setTextColor(getResources().getColor(android.R.color.black));
+            btn_Save.setEnabled(false);
+            btn_Save.setVisibility(View.INVISIBLE);
+    }
+
 
     private void initializeVariables(){
 
@@ -199,12 +243,12 @@ public class ProfileActivity extends AppCompatActivity  {
         btn_AddNext=findViewById(R.id.btn_AddNext);
 
         btn_Save=findViewById(R.id.btn_Save);
-
+        cardView = findViewById(R.id.cardView);
         companyName=findViewById(R.id.tv_CompanyName);
         additionalInfo=findViewById(R.id.et_AdditionalInfo);
 
         ratingBar=findViewById(R.id.ratingBar);
-
+        finalCardview = findViewById(R.id.finalCardView);
         addInfoProgressBar = findViewById(R.id.addInfoProgress);
         cards = new ArrayList<CardView>();
 
@@ -317,6 +361,7 @@ public class ProfileActivity extends AppCompatActivity  {
         images.add(imageView);
 
         buttons.add(btn_AddNewCompanyAd);
+
 
         buttons.get(buttons.size()-1).setOnClickListener(new View.OnClickListener() {
             @Override
