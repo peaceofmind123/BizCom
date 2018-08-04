@@ -341,4 +341,111 @@ profileRouter.post('/uploadExtraAdPic',upload.single('image'),(req,res)=>{
        });
    }
 });
+profileRouter.post('/postRating',(req,res)=>{
+   if(!req.body.userName || !req.body.rating ||isNaN(req.body.rating) || !req.body.viewerUserName)
+   {
+       res.json({"response": "invalid request"});
+   }
+   else
+   {
+       UserModel.findOne({userName:req.body.viewerUserName},(err,viewer)=>{
+
+          if(!viewer)
+          {
+              console.log("user not found");
+              res.json({"response":"user not found"});
+          }
+          if(!viewer.isLoggedIn)
+          {
+              console.log("you are not logged in");
+              res.json({"response":"not logged in"});
+          }
+          else {
+                UserModel.findOne({userName:req.body.userName},(err,user)=>{
+                    console.log(user);
+                    if(user.userType!=="business")
+                    {
+                        console.log("Wrong user type");
+                        res.json({"response":"error"});
+                    }
+                    else {
+                        let i=0;
+                        let found = false;
+                        for(;i<user.userReviews.length;i++)
+                        {
+                            if(user.userReviews[i].userName ===viewer.userName)
+                            {
+                                user.userReviews[i].rating = req.body.rating;
+                                found=true;
+                                break;
+                            }
+                        }
+                        if(found)
+                        {
+                            user.save(err=>{
+                                if(err)
+                                {
+                                    console.log("database error");
+                                    res.json({"response":"error"});
+                                }
+                                else {
+                                    console.log("success");
+                                    res.json({"response":"success"});
+                                }
+                            });
+
+                        }
+                        else {
+                            user.userReviews.push({userName:viewer.userName,
+                                rating:req.body.rating});
+                            user.save(err=>{
+                                if(err)
+                                {
+                                    console.log("database error");
+                                    res.json({"response":"error"});
+                                }
+                                else {
+                                    console.log("success");
+                                    res.json({"response":"success"});
+                                }
+                            });
+                        }
+
+                    }
+                });
+          }
+       });
+   }
+});
+profileRouter.get('/getRatings',(req,res)=>{
+   if(!req.query.userName)
+   {
+       console.log("Invalid request");
+       res.json({'response':'invalid query parameter'});
+   }
+   else
+   {
+       UserModel.findOne({userName:req.query.userName},(err,user)=>{
+          console.log(user);
+           if(user.userReviews)
+          {
+              console.log(user.userReviews);
+              let sum=0;
+              for(let i =0;i<user.userReviews.length;i++)
+              {
+                  sum+=user.userReviews[i].rating;
+              }
+              if(user.userReviews.length>0)
+                res.json({'rating':sum/user.userReviews.length});
+              else {
+                  res.json({'rating':0});
+              }
+          }
+          else {
+              console.log("no rating found");
+              res.json({rating:0});
+          }
+       });
+   }
+});
 module.exports = profileRouter;

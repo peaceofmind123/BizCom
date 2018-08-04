@@ -100,7 +100,12 @@ public class ProfileActivity extends AppCompatActivity  {
 
         });
 
-
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                postRating(rating);
+            }
+        });
 
 
 
@@ -131,6 +136,61 @@ public class ProfileActivity extends AppCompatActivity  {
 //        imageView.setBackgroundResource(R.drawable.saverounded);
 //        imageView.setVisibility(View.VISIBLE);
 //        linearLayout.addView(imageView);
+    }
+
+    private void postRating(float rating) {
+        JSONObject jsonObject  = new JSONObject();
+        try {
+            jsonObject.put("userName",user.getString("userName"));
+            jsonObject.put("rating",rating);
+            jsonObject.put("viewerUserName",viewerUser.getString("userName"));
+            Uri.Builder builder = new Uri.Builder();
+            builder.scheme("http")
+                    .encodedAuthority(getString(R.string.urlBase))
+                    .appendPath("profile")
+                    .appendPath("postRating");
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, builder.build().toString(), jsonObject,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                if (response.getString("response").equals("error"))
+                                {
+                                    DialogFragmentHelper.showDialogFragment(ProfileActivity.this,R.string.err_general_dialogMsg);
+                                }
+                                else if(response.getString("response").equals("not logged in"))
+                                {
+                                    DialogFragmentHelper.showDialogFragment(ProfileActivity.this,R.string.not_loggged_in_dialogMsg);
+                                }
+                                else if(response.getString("response").equals("success"))
+                                {
+
+                                }
+                                else if(response.getString("response").equals("user not found"))
+                                {
+                                    DialogFragmentHelper.showDialogFragment(ProfileActivity.this,R.string.not_loggged_in_dialogMsg);
+                                }
+                                else
+                                {
+                                    DialogFragmentHelper.showDialogFragment(ProfileActivity.this,R.string.err_general_dialogMsg);
+                                }
+                            }
+                            catch(JSONException e)
+                            {
+                                DialogFragmentHelper.showDialogFragment(ProfileActivity.this,R.string.err_server_dialogMsg);
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    DialogFragmentHelper.showDialogFragment(ProfileActivity.this,R.string.err_server_nonresponsive_dialogMsg);
+                }
+            });
+            MySingleton.getMinstance(this).addToRequestQueue(jsonObjectRequest);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void addCompanyAd() {
@@ -187,6 +247,7 @@ public class ProfileActivity extends AppCompatActivity  {
         getMainAdPic();
         getExtraAdPics();
         hideRatingForBusinessUser();
+        getRatings();
         try
         {
             String viewerUserType=viewerUser.getString("userType");
@@ -213,6 +274,39 @@ public class ProfileActivity extends AppCompatActivity  {
         }
     }
 
+    private void getRatings() {
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("http")
+                .encodedAuthority(getString(R.string.urlBase))
+                .appendPath("profile")
+                .appendPath("getRatings")
+        .appendQueryParameter("userName",userName);
+
+
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, builder.build().toString(), null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                        try
+                        {
+                            float rating = (float) response.getDouble("rating");
+                            ratingBar.setRating(rating);
+                        }
+                        catch (JSONException e)
+                        {
+                            DialogFragmentHelper.showDialogFragment(ProfileActivity.this,R.string.err_server_dialogMsg);
+                        }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    DialogFragmentHelper.showDialogFragment(ProfileActivity.this,R.string.err_server_nonresponsive_dialogMsg);
+                }
+            });
+            MySingleton.getMinstance(this).addToRequestQueue(jsonObjectRequest);
+
+    }
+
     private void hideRatingForBusinessUser() {
         try
         {
@@ -228,7 +322,7 @@ public class ProfileActivity extends AppCompatActivity  {
         {
 
         }
-        
+
     }
 
     private void getMainAdPic() {
