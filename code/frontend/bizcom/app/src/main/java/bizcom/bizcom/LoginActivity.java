@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView Signup; //this is for unregistered users
     private TextView ForgotPassword;
     String jsonUrl = "http://192.168.1.67:8000/userAccounts/login";
+    private ProgressBar loginProgressBar;
 
 
 
@@ -119,6 +121,8 @@ public class LoginActivity extends AppCompatActivity {
         Login = (Button) findViewById((R.id.btnlogin));
         Signup = (TextView) findViewById((R.id.etSignup));
         ForgotPassword = findViewById(R.id.textForgotPassword);
+        loginProgressBar = findViewById(R.id.loginProgressBar);
+        loginProgressBar.setVisibility(View.GONE);
         ForgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -178,7 +182,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
 
                     };*/
-
+                    loginProgressBar.setVisibility(View.VISIBLE);
                    //creating a json object to pass credentials to server
                    JSONObject passCredentials = new JSONObject();
                     try {
@@ -196,7 +200,7 @@ public class LoginActivity extends AppCompatActivity {
                     JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, jsonUrl, passCredentials, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-
+                            loginProgressBar.setVisibility(View.GONE);
                            try {
                                 //String uName= response.getString("userName");
 

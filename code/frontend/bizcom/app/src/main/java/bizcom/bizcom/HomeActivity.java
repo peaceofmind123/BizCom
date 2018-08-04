@@ -104,10 +104,7 @@ public class HomeActivity extends AppCompatActivity {
                             {
                                 try
                                 {
-                                    for(int i =0;i<result.getResult().size();i++)
-                                    {
-                                        handleSearchResult(result);
-                                    }
+                                    handleSearchResult(result);
                                 }
                                 catch(NullPointerException e1)
                                 {
@@ -122,12 +119,19 @@ public class HomeActivity extends AppCompatActivity {
     private void handleSearchResult(Response<JsonArray> companyNames) {
 
         searchResultsCompanyName = new ArrayList<>();
+        int x = companyNames.getResult().size();
+        System.out.println(x);
         if(!(companyNames.getResult().isJsonNull()))
         {
             for(int i=0;i<companyNames.getResult().size();i++)
             {
                 searchResultsCompanyName.add(cleanCompanyName(companyNames.getResult().get(i).toString()));
             }
+        }
+        if(x==0)
+        {
+            //nothing found
+            DialogFragmentHelper.showDialogFragment(this,"Nothing was found matching your query");
         }
         if(searchResultsCompanyName.size()>0)
         {

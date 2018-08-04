@@ -39,7 +39,8 @@ searchRouter.get('/',(req,res)=>{
                         let companyNames = [];
                         console.log(results);
                         results.forEach(result=>{
-                            companyNames.push(result.userName);
+                            if(result.userType==="business")
+                                companyNames.push(result.userName);
                         });
 
 
