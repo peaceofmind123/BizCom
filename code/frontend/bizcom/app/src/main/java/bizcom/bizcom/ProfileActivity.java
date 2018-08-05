@@ -542,7 +542,7 @@ public class ProfileActivity extends AppCompatActivity  {
 
 
         //parameteres for new cardview
-        LinearLayout.LayoutParams lb = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        LinearLayout.LayoutParams lb = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 600);
         lb.bottomMargin=6;
         cardView.setLayoutParams(lb);
         cardView.setContentPadding(4,4,4,4);
@@ -571,7 +571,7 @@ public class ProfileActivity extends AppCompatActivity  {
         ImageButton btn_AddNewCompanyAd = new ImageButton(this);
 
 
-        CardView.LayoutParams cardParamsForButton = new CardView.LayoutParams(70,70);
+        CardView.LayoutParams cardParamsForButton = new CardView.LayoutParams(140,140);
         try {
             if (viewerUser.getString("userType").equals("general")){
 
