@@ -31,6 +31,9 @@ uaRouter.post('/getUserDetails',(req,res)=>{
            }
        });
    }
+   else {
+       res.json(errorResponse);
+   }
 });
 uaRouter.post('/logout',(req,res)=>{
     if(req.body.userName)

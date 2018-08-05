@@ -200,7 +200,7 @@ public class HomeActivity extends AppCompatActivity {
                         catch (JSONException e)
                         {
                             //means an error
-                            DialogFragmentHelper.showDialogFragment(HomeActivity.this,R.string.err_server_dialogMsg);
+                           // DialogFragmentHelper.showDialogFragment(HomeActivity.this,R.string.err_server_dialogMsg);
                         }
 
                     }
