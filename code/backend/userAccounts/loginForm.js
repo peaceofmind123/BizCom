@@ -11,7 +11,7 @@ loginForm.route('/').post((req,res)=>{
             //if the username is registered compare the passwords
 
             //if password matches
-            if ((req.body.password)===(model.password)){
+            if ((req.body.password)===(model.password)&& !model.isLoggedIn){
                 let loginToken = Math.floor((Math.random()*10000000)+100000).toString();
                 model.isLoggedIn=true;
                 model.loginToken = loginToken;
