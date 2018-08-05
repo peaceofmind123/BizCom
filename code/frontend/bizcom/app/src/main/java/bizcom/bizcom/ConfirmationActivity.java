@@ -151,13 +151,19 @@ public class ConfirmationActivity extends AppCompatActivity{
         {
             if(userType.equals("general")) //for generalUsers, we start the home activity
             {
-                startHomeActivity();
+                startLoginActivity();
+
             }
             else
             {
-                startProfileActivity();
+                startLoginActivity();
             }
         }
+    }
+
+    private void startLoginActivity() {
+        Intent intent = new Intent(this,LoginActivity.class);
+        startActivity(intent);
     }
 
     private HashMap<String,String> mapResponses() {

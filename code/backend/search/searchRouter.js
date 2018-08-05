@@ -15,7 +15,7 @@ searchRouter.get('/',(req,res)=>{
             {
                 $or:[{userName:{$regex:regex,$options:'i'}},{fName:{$regex:regex,$options:'i'}},
                     {lName:{$regex:regex,$options:'i'}},{city:{$regex:regex,$options:'i'}},
-                    {country:{$regex:regex,$options:'i'}}]
+                    {country:{$regex:regex,$options:'i'}},{additionalInfo:{$regex:regex,$options:'i'}}]
 
             }
         )
