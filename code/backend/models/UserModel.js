@@ -24,7 +24,8 @@ let UserSchema = new Schema({
     score:Number,
     additionalInfo:String,
     additionalAdPicsPath:[String],
-    userReviews: [UserReviewSchema]
+    userReviews: [UserReviewSchema],
+    loginToken:String
 }, {collection: 'users'});
 UserSchema.index(
     {

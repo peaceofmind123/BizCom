@@ -39,6 +39,7 @@ uaRouter.post('/logout',(req,res)=>{
            if(user && user.isLoggedIn)
            {
                user.isLoggedIn = false;
+               user.loginToken = "";
                user.save(err=>{
                    if(err)
                    {

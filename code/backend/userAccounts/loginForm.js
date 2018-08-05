@@ -12,7 +12,9 @@ loginForm.route('/').post((req,res)=>{
 
             //if password matches
             if ((req.body.password)===(model.password)){
+                let loginToken = Math.floor((Math.random()*10000000)+100000).toString();
                 model.isLoggedIn=true;
+                model.loginToken = loginToken;
                 model.save((err)=>{
                     if(err)
                     {
