@@ -217,6 +217,8 @@ public class ProfileActivity extends AppCompatActivity  {
         {
             jsonObject.put("additionalInfo",additionalInfoString);
             jsonObject.put("userName",userName);
+            jsonObject.put("loginToken",user.getString("loginToken"));
+
         }
         catch(JSONException e)
         {

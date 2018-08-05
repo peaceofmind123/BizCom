@@ -269,7 +269,7 @@ profileRouter.post('/deleteExtraAdPic',(req,res)=>{
 });
 profileRouter.post('/updateAdditionalInfo',(req,res)=>{
     console.log(req.body);
-    if(!req.body.userName || !req.body.additionalInfo)
+    if(!req.body.userName || !req.body.additionalInfo || !req.body.loginToken)
     {
         console.log('wrong body params');
         res.json({'response':'error'});
@@ -283,7 +283,7 @@ profileRouter.post('/updateAdditionalInfo',(req,res)=>{
                res.json({'response':'error'});
            }
            else {
-               if(!user.isLoggedIn)
+               if(!user.isLoggedIn || user.loginToken!==req.body.loginToken || req.body.loginToken==="")
                {
                    console.log("not logged in");
                    res.json({'response':'not logged in'});
