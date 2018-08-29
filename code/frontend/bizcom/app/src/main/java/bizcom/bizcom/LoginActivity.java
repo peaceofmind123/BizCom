@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button Login;
     private TextView Signup; //this is for unregistered users
     private TextView ForgotPassword;
-    String jsonUrl = "http://192.168.1.67:8000/userAccounts/login";
+    String jsonUrl = "http://192.168.43.45:8000/userAccounts/login";
     private ProgressBar loginProgressBar;
 
 
